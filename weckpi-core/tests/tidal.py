@@ -4,8 +4,8 @@ from pathlib import Path
 import os
 
 
-class TestClass(unittest.TestCase):
-    def check_tidal_login(self):
+class TidalTests(unittest.TestCase):
+    def test_tidal_login(self):
         # Arrange
         # Remove the credentials file
         try:
@@ -19,3 +19,7 @@ class TestClass(unittest.TestCase):
         # Assert
         self.assertIsInstance(session, tidal.Session)
         self.assertTrue(session.check_login())
+
+
+if __name__ == '__main__':
+    unittest.main()
