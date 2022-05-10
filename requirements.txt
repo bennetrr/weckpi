@@ -1,0 +1,4 @@
+pyyaml
+requests
+rich
+git+https://github.com/tamland/python-tidal@0.7.x
