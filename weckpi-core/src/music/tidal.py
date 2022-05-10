@@ -1,7 +1,8 @@
 import logging
-from tidalapi import Session
 from pathlib import Path
+
 import yaml
+from tidalapi import Session
 
 logger = logging.getLogger('weckpi.music.tidal')
 
@@ -51,4 +52,3 @@ def login(credentials_file: Path) -> Session:
 
     logger.info('Successfully logged in to Tidal')
     return session
-

@@ -1,7 +1,8 @@
-import unittest
-from music import tidal
-from pathlib import Path
 import os
+import unittest
+from pathlib import Path
+
+from music import tidal
 
 
 class TidalTests(unittest.TestCase):

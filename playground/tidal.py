@@ -1,8 +1,11 @@
-import tidalapi
+"""Experimenting with the tidal api"""
 from pathlib import Path
-from music import tidal
-from rich.table import Table
+
+import tidalapi
 from rich import print as rich_print
+from rich.table import Table
+
+from music import tidal
 
 # Log in to TIDAL
 session = tidal.login(Path('tidal_credentials.yaml'))
@@ -30,7 +33,8 @@ try:
 except IndexError:
     print('Playlist not found!')
 else:
-    print(f'Found Playlist: {searched_playlist.name} ({searched_playlist.id}) with {searched_playlist.num_tracks} tracks')
+    print(
+        f'Found Playlist: {searched_playlist.name} ({searched_playlist.id}) with {searched_playlist.num_tracks} tracks')
     print('Contains:')
     for uuid, track in enumerate(searched_playlist.tracks()):
         print(f'{uuid + 1}. {track.artist.name} - {track.name} ({track.id})')
