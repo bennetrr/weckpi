@@ -22,6 +22,7 @@ class SearchResult:
 
     @staticmethod
     def from_api_result(api_result: dict) -> 'SearchResult':
+        """Create a SearchResult from the API result"""
         return SearchResult(
             top_hit=api_result.get('top_hit', None),
             artists=api_result.get('artists', None),
@@ -41,7 +42,7 @@ class TidalSession:
         Log in to Tidal using OAuth2.
         If the credential file contains a valid access token, this is used to log in.
         Otherwise, you will be asked to open a browser and log in.
-    
+
         :param credential_file: The path to the credential file
         :return: The Tidal session that you performed the login on
         """
@@ -100,7 +101,7 @@ class TidalSession:
         :param tracks: Search for tracks
         :param videos: Search for music videos
         :param playlists: Search for playlists
-        :return:
+        :return: The search result
         """
         models = []
         if artists:
