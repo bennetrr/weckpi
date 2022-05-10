@@ -10,12 +10,13 @@ logger = logging.getLogger('weckpi.music.tidal')
 
 def login(credentials_file: Path) -> Session:
     """
-    Login to Tidal using OAuth2. If the credentials file contains a valid access token, this is used to log in. Otherwise you will asked to open a browser and login.
+    Login to Tidal using OAuth2.
+    If the credentials file contains a valid access token, this is used to log in.
+    Otherwise you will asked to open a browser and login.
 
     :param credentials_file: The path to the credentials file
     :return: The Tidal session
     """
-    # TODO Write tests
     # Create a new tidal session
     session = Session()
 
