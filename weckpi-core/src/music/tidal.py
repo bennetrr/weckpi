@@ -1,3 +1,4 @@
+"""Tools for interacting with Tidal"""
 import logging
 from pathlib import Path
 

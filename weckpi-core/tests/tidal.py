@@ -1,3 +1,4 @@
+"""Tests for the Tidal integration"""
 import os
 import unittest
 from pathlib import Path
@@ -6,7 +7,9 @@ from music import tidal
 
 
 class TidalTests(unittest.TestCase):
+    """Tests for the Tidal integration"""
     def test_tidal_login(self):
+        """Test, if the login works"""
         # Arrange
         # Remove the credentials file
         try:
