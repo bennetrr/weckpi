@@ -3,26 +3,35 @@ import os
 import unittest
 from pathlib import Path
 
+import tidalapi
+
 from music import tidal
 
 
 class TidalTests(unittest.TestCase):
     """Tests for the Tidal integration"""
+
     def test_tidal_login(self):
-        """Test, if the login works"""
+        """Test if the login works"""
         # Arrange
-        # Remove the credentials file
         try:
-            os.remove('tidal_credentials.json')
+            # Remove the credential file
+            os.remove('tidal_credential.yaml')
         except FileNotFoundError:
             pass
 
         # Act
-        session = tidal.login(Path('tidal_credentials.json'))
+        # Log in with the link
+        session1 = tidal.TidalSession().login(Path('tidal_credential.yaml'))
+        # Log in with the credential file
+        session2 = tidal.TidalSession().login(Path('tidal_credential.yaml'))
 
         # Assert
-        self.assertIsInstance(session, tidal.Session)
-        self.assertTrue(session.check_login())
+        self.assertIsInstance(session1.session, tidalapi.Session)
+        self.assertTrue(session1.is_logged_in())
+
+        self.assertIsInstance(session2.session, tidalapi.Session)
+        self.assertTrue(session2.is_logged_in())
 
 
 if __name__ == '__main__':

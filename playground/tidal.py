@@ -8,7 +8,7 @@ from rich.table import Table
 from music import tidal
 
 # Log in to TIDAL
-session = tidal.login(Path('tidal_credentials.yaml'))
+session = tidal.TidalSession().login(Path('tidal_credential.yaml'))
 
 # Print out the users playlists
 my_user = tidalapi.user.LoggedInUser(session, session.user.id)
