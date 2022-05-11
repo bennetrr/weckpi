@@ -131,6 +131,7 @@ class TidalSession:
 
         :param uid: The ID
         :return: The TIDAL object
+        :raises
         """
         model_type, new_uid = uid.split('+')
 
