@@ -104,7 +104,7 @@ class TidalSession:
     @staticmethod
     def get_id(obj: Union[tidalapi.Artist, tidalapi.Album, tidalapi.Track, tidalapi.Video, tidalapi.Playlist]) -> str:
         """
-        Get the ID of the given object
+        Get the ID in the format type+id for the given object
 
         :param obj: An object of the TIDAL API
         :return: The ID
@@ -124,5 +124,25 @@ class TidalSession:
             raise ValueError('Unknown object type')
         return uid
 
-    def resolve_id(self, uid):
-        pass
+    def resolve_id(self, uid) \
+            -> Union[tidalapi.Artist, tidalapi.Album, tidalapi.Track, tidalapi.Video, tidalapi.Playlist]:
+        """
+        Get the TIDAL object for the given ID in the format type+id
+
+        :param uid: The ID
+        :return: The TIDAL object
+        """
+        model_type, new_uid = uid.split('+')
+
+        if model_type == 'artist':
+            return self.session.artist(new_uid)
+        elif model_type == 'album':
+            return self.session.album(new_uid)
+        elif model_type == 'track':
+            return self.session.track(new_uid)
+        elif model_type == 'video':
+            return self.session.video(new_uid)
+        elif model_type == 'playlist':
+            return self.session.playlist(new_uid)
+        else:
+            raise ValueError('Unknown object type')

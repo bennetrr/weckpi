@@ -1,3 +1,4 @@
+"""Tools for searching TIDAL"""
 import logging
 from dataclasses import dataclass
 from typing import Union
