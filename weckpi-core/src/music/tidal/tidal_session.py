@@ -1,50 +1,30 @@
-"""Tools for interacting with Tidal"""
+"""Tools for interacting with a TIDAL session"""
 import logging
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
 
 import tidalapi
 import yaml
 
+from music.tidal.search_result import SearchResult
+
 logger = logging.getLogger('weckpi.music.tidal')
 
 
-@dataclass(repr=False, eq=False, order=False, frozen=True, kw_only=True)
-class SearchResult:
-    """Represents the search result from Tidal"""
-    top_hit: Union[tidalapi.Artist, tidalapi.Album, tidalapi.Track, tidalapi.Video, tidalapi.Playlist]
-    artists: list[tidalapi.Artist]
-    albums: list[tidalapi.Album]
-    tracks: list[tidalapi.Track]
-    videos: list[tidalapi.Video]
-    playlists: list[tidalapi.Playlist]
-
-    @staticmethod
-    def from_api_result(api_result: dict) -> 'SearchResult':
-        """Create a SearchResult from the API result"""
-        return SearchResult(
-            top_hit=api_result.get('top_hit', None),
-            artists=api_result.get('artists', None),
-            albums=api_result.get('albums', None),
-            tracks=api_result.get('tracks', None),
-            videos=api_result.get('videos', None),
-            playlists=api_result.get('playlists', None)
-        )
-
-
 class TidalSession:
-    """Represents a session with the Tidal api"""
+    """Represents a session with the TIDAL API"""
     session: tidalapi.Session
 
     def login(self, credential_file: Path) -> 'TidalSession':
         """
-        Log in to Tidal using OAuth2.
-        If the credential file contains a valid access token, this is used to log in.
-        Otherwise, you will be asked to open a browser and log in.
+        Login to TIDAL using OAuth2.
+
+        This method first tries to log in with the tokens stored in the credential file.
+        If that fails, you will be asked to open a URL in your browser and log in with your TIDAL account.
 
         :param credential_file: The path to the credential file
-        :return: The Tidal session that you performed the login on
+        :return: The TIDAL session linked to your account
+        :raises PermissionError: If the login failed
         """
         # Create a new tidal session
         self.session = tidalapi.Session()
@@ -52,6 +32,7 @@ class TidalSession:
         # Check if the credential file exists
         if credential_file.is_file():
             # Try to log in with the token in the credential file
+            # TODO: Save the new token if the token needs to be refreshed
             with credential_file.open('r') as f:
                 tidal_credential = yaml.load(f, yaml.SafeLoader)
             self.session.load_oauth_session(tidal_credential['session_id'],
@@ -87,7 +68,8 @@ class TidalSession:
     def is_logged_in(self):
         """
         Check if the current session is valid
-        :return: The state of the session
+
+        :return: If the session is valid
         """
         return self.session.check_login()
 
@@ -95,6 +77,7 @@ class TidalSession:
                tracks: bool = True, videos: bool = True, playlists: bool = True) -> SearchResult:
         """
         Search Tidal for the following term
+
         :param query: The term to search for
         :param artists: Search for artists
         :param albums: Search for albums
@@ -117,3 +100,29 @@ class TidalSession:
         raw_results = self.session.search(query, models, limit=300)
         results = SearchResult.from_api_result(raw_results)
         return results
+
+    @staticmethod
+    def get_id(obj: Union[tidalapi.Artist, tidalapi.Album, tidalapi.Track, tidalapi.Video, tidalapi.Playlist]) -> str:
+        """
+        Get the ID of the given object
+
+        :param obj: An object of the TIDAL API
+        :return: The ID
+        :raises ValueError: If the object is not of the TIDAL API
+        """
+        if isinstance(obj, tidalapi.Artist):
+            uid = f'artist+{obj.id}'
+        elif isinstance(obj, tidalapi.Album):
+            uid = f'album+{obj.id}'
+        elif isinstance(obj, tidalapi.Track):
+            uid = f'track+{obj.id}'
+        elif isinstance(obj, tidalapi.Video):
+            uid = f'video+{obj.id}'
+        elif isinstance(obj, tidalapi.Playlist):
+            uid = f'playlist+{obj.id}'
+        else:
+            raise ValueError('Unknown object type')
+        return uid
+
+    def resolve_id(self, uid):
+        pass
