@@ -10,7 +10,7 @@ import time
 import sd_notify
 import yaml
 
-from bUtils import day_time, display, gpio, vlcplayer
+from utils import day_time, display, gpio, vlcplayer
 
 
 ##################
