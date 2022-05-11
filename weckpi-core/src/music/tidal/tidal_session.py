@@ -135,14 +135,16 @@ class TidalSession:
         model_type, new_uid = uid.split('+')
 
         if model_type == 'artist':
-            return self.session.artist(new_uid)
+            obj = self.session.artist(new_uid)
         elif model_type == 'album':
-            return self.session.album(new_uid)
+            obj = self.session.album(new_uid)
         elif model_type == 'track':
-            return self.session.track(new_uid)
+            obj = self.session.track(new_uid)
         elif model_type == 'video':
-            return self.session.video(new_uid)
+            obj = self.session.video(new_uid)
         elif model_type == 'playlist':
-            return self.session.playlist(new_uid)
+            obj = self.session.playlist(new_uid)
         else:
             raise ValueError('Unknown object type')
+
+        return obj
