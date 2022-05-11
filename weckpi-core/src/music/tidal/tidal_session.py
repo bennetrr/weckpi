@@ -131,7 +131,7 @@ class TidalSession:
 
         :param uid: The ID
         :return: The TIDAL object
-        :raises
+        :raises ValueError: If the ID is not in the correct format
         """
         model_type, new_uid = uid.split('+')
 
