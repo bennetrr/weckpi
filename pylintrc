@@ -1,9 +1,0 @@
-[FORMAT]
-good-names=i,j,k,f
-max-line-length=120
-
-[MESSAGES CONTROL]
-disable=
-    E0401, # Import error
-    W0511, # Fix me
-    R0913  # Too many arguments

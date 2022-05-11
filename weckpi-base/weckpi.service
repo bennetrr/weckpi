@@ -1,0 +1,20 @@
+[Unit]
+Description=WeckPi Host Application
+After=network-online.target sound.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+Type=notify
+WorkingDirectory=/opt/weckpi/
+ExecStart=/opt/weckpi/weckpi.py
+Restart=no
+RestartForceExitStatus=2
+RestartSec=5
+NotifyAccess=main
+ExecReload=/usr/bin/weckpictl reload-config
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="15"
+   height="15"
+   viewBox="0 0 3.96875 3.9687501"
+   version="1.1"
+   id="svg3723"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="weckzeiten.svg">
+  <defs
+     id="defs3717" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="57.533333"
+     inkscape:cx="8.5264719"
+     inkscape:cy="7.800842"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:pagecheckerboard="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1044"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3720">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-293.03123)">
+    <path
+       inkscape:connector-curvature="0"
+       d="m 1.9844503,293.03123 c 0.1461241,0 0.2645833,0.11846 0.2645833,0.26458 -7.67e-5,0.009 -5.291e-4,0.0176 -0.00159,0.0264 0.6059805,0.12139 1.0599288,0.65384 1.0598838,1.29656 l -3.7e-5,0.52916 v 0.66146 l 0.5291667,0.52917 v 0.13229 H 3.3072929 0.66145957 0.1322929 v -0.13229 l 0.52916667,-0.52917 3.704e-5,-1.19062 c 2.116e-5,-0.64272 0.45394029,-1.17517 1.05988379,-1.29656 -0.00106,-0.009 -0.00159,-0.0176 -0.00159,-0.0264 0,-0.14612 0.1184592,-0.26458 0.2645833,-0.26458 z m 0.4573006,3.70416 c -0.094358,0.16344 -0.2686183,0.26425 -0.4573376,0.26459 -0.1889046,-1.5e-4 -0.3634026,-0.10099 -0.4578535,-0.26459 z"
+       id="rect11474"
+       sodipodi:nodetypes="sccscccccccccscssscccc"
+       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.79374999;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+</svg>
