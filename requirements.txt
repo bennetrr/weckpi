@@ -1,4 +1,5 @@
 pyyaml
 requests
 rich
+python-vlc
 git+https://github.com/tamland/python-tidal@0.7.x
