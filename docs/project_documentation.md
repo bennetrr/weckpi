@@ -1,8 +1,10 @@
+<img src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/logo/WeckPi%20%20Logo%201024.png" title="WeckPi Logo" alt="WeckPi Logo"/>
+
 # Project Documentation
 ## Idea
 
 I don't really know when I got the idea of building my own alarm clock, but I know that I had many other ideas like
-this before (like building a drone or an rc car with the RPi), from which none of them was ever completed or even started.
+this before (like building a drone or an RC Car with the RPi), from which none of them was ever completed or even started.
 
 I only know that I started to experiment with Raspberry Pi, an LCD and a small speaker round about in spring of 2020.
 There were many reasons why I wanted to build my own alarm clock, but here are the three main reasons:
