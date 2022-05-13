@@ -1,5 +1,7 @@
 # Project Documentation
-<img src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/logo/WeckPi%20%20Logo%201024.png" title="WeckPi Logo" alt="WeckPi Logo"/>
+<div style="text-align: center;">
+    <img src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/logo/WeckPi%20%20Logo%201024.png" title="WeckPi Logo" alt="WeckPi Logo" width="25%" height="25%"/>
+</div>
 
 ## Idea
 
