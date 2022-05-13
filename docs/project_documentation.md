@@ -1,6 +1,6 @@
+# Project Documentation
 <img src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/logo/WeckPi%20%20Logo%201024.png" title="WeckPi Logo" alt="WeckPi Logo"/>
 
-# Project Documentation
 ## Idea
 
 I don't really know when I got the idea of building my own alarm clock, but I know that I had many other ideas like
