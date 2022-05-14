@@ -4,7 +4,7 @@
 
 I don't really know when I got the idea of building my own alarm clock, but I know that I had many other ideas like this before (like building a drone or an RC Car with the RPi) from which none of them was ever completed or even started.
 
-I only know that I started to experiment with Raspberry Pi, an LCD and a small speaker round about in spring of 2020. There were many reasons why I wanted to build my own alarm clock, but here are the three main reasons:
+I only know that I started to experiment with the Raspberry Pi, an LCD and a small speaker round about in spring of 2020. There were many reasons why I wanted to build my own alarm clock, but here are the three main reasons:
 
 1. The alarm clock I had at this time had a technical defect that caused the time to go forward faster than it should. After a few weeks, my clock was about 10 minutes earlier than the real time.  The alarm clock also didn't have a radio link to set the time automatically, so I had to constantly reset the time manually.
 2. The display was very bright and could not be turned off, which bothered me when I was falling asleep.
@@ -12,13 +12,13 @@ I only know that I started to experiment with Raspberry Pi, an LCD and a small s
 
 ## WeckPi v1
 
-The current version (at this point of writing) is v1.2.1.
+The current version is v1.2.1.
 
 ### Hardware
-
+---Add Hardware images here---
 The main part of the hardware of WeckPi v1 is a [Raspberry Pi 3B+](https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/).
 
-As the display, I use a [HD44780 2x16 LCD with an I2C converter](https://www.az-delivery.de/products/lcd-display-16x2-mit-blauem-hintergrund-und-i2c-converter-bundle). Because the GPIO driver can only handle 3V3, but the display operates on 5V, I also needed an [I2C LLC](https://www.amazon.de/ARCELI-Converter-Bidirektionales-Shifter-Arduino/dp/B07RDHR315).
+As the display, I used a [HD44780 2x16 LCD with an I2C converter](https://www.az-delivery.de/products/lcd-display-16x2-mit-blauem-hintergrund-und-i2c-converter-bundle). Because the GPIO driver can only handle 3V3, but the display operates on 5V, I also needed an [I2C LLC](https://www.amazon.de/ARCELI-Converter-Bidirektionales-Shifter-Arduino/dp/B07RDHR315).
 
 For sound playback, a small portable speaker is used ([X-Mini II](https://www.amazon.com/gp/product/B004SNDC7I)) that we got some time ago as an advertising gift. The battery was replaced with a cable to one of the GPIO pins, so the WeckPi can turn on and off the speaker.
 
