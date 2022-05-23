@@ -11,9 +11,9 @@ an LCD and a small speaker round about in spring of 2020.
 There were many reasons why I wanted to build my own alarm clock, but here are the three main reasons:
 
 1. The alarm clock I had at this time had a technical defect that caused the time to go forward faster than it should.
-After a few weeks, my clock was about 10 minutes earlier than the real time.
-The alarm clock also didn't have a radio link to set the time automatically,
-so I had to constantly reset the time manually.
+   After a few weeks, my clock was about 10 minutes earlier than the real time.
+   The alarm clock also didn't have a radio link to set the time automatically,
+   so I had to constantly reset the time manually.
 2. The display was very bright and could not be turned off, which bothered me when I was falling asleep.
 3. The alarm clock only supports analog radio, which comes with a lower quality and fewer stations.
 
@@ -22,9 +22,10 @@ so I had to constantly reset the time manually.
 The current version is v1.2.1.
 
 ### Hardware
-<img alt="A picture of the WeckPi v1 from the top" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/P1000895.jpg" title="WeckPi v1 top view" width="30%"/>
-<img alt="A picture of the WeckPi v1 from the front" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/P1000916.jpg" title="WeckPi v1 front view" width="30%"/>
-<img alt="The circuit plan of the WeckPi v1" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/WeckPi_Steckplatine.png" title="WeckPi v1 circuit plan" width="30%"/>
+
+|                                                                                                                                                                                                     |                                                                                                                                                                                                         |                                                                                                                                                                                                              |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img alt="A picture of the WeckPi v1 from the top" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/P1000895.jpg" title="WeckPi v1 top view" width="30%"/> | <img alt="A picture of the WeckPi v1 from the front" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/P1000916.jpg" title="WeckPi v1 front view" width="30%"/> | <img alt="The circuit plan of the WeckPi v1" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/WeckPi_Steckplatine.png" title="WeckPi v1 circuit plan" width="30%"/> |
 
 The main part of the hardware of WeckPi v1 is a [Raspberry Pi 3B+](https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/).
 
