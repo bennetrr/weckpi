@@ -33,10 +33,12 @@ class BasePlayer:
         """Stop the playback of the media and reset the media"""
         self.player.stop()
 
-    def next(self) -> None:  # pylint: disable=R0201
+    # pylint: disable=R0201
+    def next(self) -> None:
         """Next item in the playlist"""
 
-    def previous(self) -> None:  # pylint: disable=R0201
+    # pylint: disable=R0201
+    def previous(self) -> None:
         """Previous item in the playlist"""
 
     @property
