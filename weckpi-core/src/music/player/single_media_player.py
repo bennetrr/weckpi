@@ -25,6 +25,7 @@ class SingleMediaPlayer(BasePlayer):
         """Set the media source"""
         self.media = self.instance.media_new(media_source)
         self.player.set_media(self.media)
+        super().media_source = media_source
 
     def next(self) -> None:
         """Next item in the playlist"""

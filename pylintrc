@@ -1,5 +1,5 @@
 [FORMAT]
-good-names=i,j,k,f
+good-names=i,j,k,f,r
 max-line-length=120
 
 [MESSAGES CONTROL]

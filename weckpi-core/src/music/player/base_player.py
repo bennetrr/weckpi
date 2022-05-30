@@ -1,4 +1,6 @@
 """The base for a vlc player"""
+from pathlib import Path
+
 import vlc
 
 
@@ -11,6 +13,7 @@ class BasePlayer:
     instance: vlc.Instance
     player: vlc.MediaListPlayer | vlc.MediaPlayer
     media: vlc.MediaList | vlc.Media
+    media_source = str | Path
 
     def __init__(self, args: str | tuple[str] = ()):
         """
@@ -19,6 +22,9 @@ class BasePlayer:
         :param args: Command line arguments for vlc
         """
         self.instance = vlc.Instance(args)
+
+    def set_media(self, media_source: str | Path):
+        self.media_source = media_source
 
     def play(self) -> None:
         """Start the playback of the media"""
