@@ -1,7 +1,8 @@
 """A player for a single media source"""
-from music.player.base_player import BasePlayer
-from pathlib import Path
 import logging
+from pathlib import Path
+
+from music.player.base_player import BasePlayer
 
 logger = logging.getLogger('weckpi.music.player')
 
