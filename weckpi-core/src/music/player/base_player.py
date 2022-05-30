@@ -2,6 +2,7 @@
 import vlc
 
 
+# pylint: disable=R0201
 class BasePlayer:
     """
     The base for a vlc player.
@@ -33,11 +34,9 @@ class BasePlayer:
         """Stop the playback of the media and reset the media"""
         self.player.stop()
 
-    # pylint: disable=R0201
     def next(self) -> None:
         """Next item in the playlist"""
 
-    # pylint: disable=R0201
     def previous(self) -> None:
         """Previous item in the playlist"""
 
