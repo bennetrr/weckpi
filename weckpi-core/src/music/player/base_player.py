@@ -2,7 +2,6 @@
 import vlc
 
 
-# pylint: disable=R0201
 class BasePlayer:
     """
     The base for a vlc player.
@@ -20,7 +19,6 @@ class BasePlayer:
         :param args: Command line arguments for vlc
         """
         self.instance = vlc.Instance(args)
-        self.volume = 1
 
     def play(self) -> None:
         """Start the playback of the media"""
