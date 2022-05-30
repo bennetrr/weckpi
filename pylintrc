@@ -7,4 +7,3 @@ disable=
     E0401, # Import error
     W0511, # Fix me
     R0913  # Too many arguments
-    R0201  # No self use
