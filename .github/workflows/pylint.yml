@@ -22,7 +22,7 @@ jobs:
         pip install pylint
 
     - name: Set up pylint annotator
-      uses: pr-annotators/pylint-pr-annotator
+      uses: pr-annotators/pylint-pr-annotator@main
 
     - name: Analyse the code with pylint
       run: |
