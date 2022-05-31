@@ -1,12 +1,28 @@
-"""The base for a vlc player"""
+"""The base for every vlc player"""
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 import vlc
 
+from music.metadata import NowPlaying, InternetRadioMetadataApi
 
-class BasePlayer:
+
+def add_argument(args: tuple[str], arg: str) -> tuple[str]:
     """
-    The base for a vlc player.
+    Add a new argument to the list of arguments
+
+    :param args: The old list of arguments
+    :param arg: The new argument
+    :return: The new list of arguments
+    """
+    list_args = list(args)
+    list_args.append(arg)
+    return tuple(list_args)
+
+
+class BasePlayer(ABC):
+    """
+    The base for every vlc player
 
     This class is an abstract class, do not instantiate it directly!
     """
@@ -15,16 +31,18 @@ class BasePlayer:
     media: vlc.MediaList | vlc.Media
     media_source = str | Path
 
-    def __init__(self, args: str | tuple[str] = ()):
+    def __init__(self, *args: str):
         """
-        Initialize the player
+        The base for every vlc player
 
-        :param args: Command line arguments for vlc
+        :param args: Arguments to pass to vlc.
+        For possible arguments, see the help of the vlc cli.
         """
         self.instance = vlc.Instance(args)
 
-    def set_media(self, media_source: str | Path):
-        self.media_source = media_source
+    @abstractmethod
+    def set_media(self, media_source: str | Path, now_playing: NowPlaying | InternetRadioMetadataApi) -> None:
+        """Set the media source"""
 
     def play(self) -> None:
         """Start the playback of the media"""
@@ -38,19 +56,22 @@ class BasePlayer:
         """Stop the playback of the media and reset the media"""
         self.player.stop()
 
+    @abstractmethod
     def next(self) -> None:
-        """Next item in the playlist"""
+        """Jump to the next item in the playlist"""
 
+    @abstractmethod
     def previous(self) -> None:
-        """Previous item in the playlist"""
+        """Jump to the previous item in the playlist"""
+
+    @property
+    @abstractmethod
+    def now_playing(self) -> NowPlaying:
+        """Get information about the song that is playing now"""
 
     @property
     def volume(self) -> int:
-        """
-        Get the volume of the player
-
-        :return: The volume of the player
-        """
+        """Get the volume of the player"""
         return self.player.audio_get_volume()
 
     @volume.setter

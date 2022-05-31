@@ -1,16 +1,22 @@
-"""Tools for working with internet radio metadata"""
-from music.metadata import NowPlaying
+"""Tools for working with the metadata of internet radio stations"""
+from abc import ABC, abstractmethod
+
+from music.metadata.now_playing import NowPlaying
 
 
-class InternetRadioMetadataApi:
-    """A model for the metadata API for internet radio providers"""
+class InternetRadioMetadataApi(ABC):
+    """
+    An abstraction for interacting with the metadata API of internet radio providers
+
+    This class is an abstract class, do not instantiate it directly!
+    """
 
     @property
+    @abstractmethod
     def now_playing(self) -> NowPlaying:
-        """Get information about what song is playing now"""
-        return NowPlaying('', '', '', self.station_image)
+        """Get information about the song that is playing now"""
 
     @property
+    @abstractmethod
     def station_image(self) -> str:
         """Get the image of the station"""
-        return ''

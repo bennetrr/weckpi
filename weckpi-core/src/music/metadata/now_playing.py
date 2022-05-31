@@ -1,10 +1,10 @@
-"""Tools for fetching metadata of internet radios"""
+"""Tools for working with metadata for the song that is playing now"""
 from dataclasses import dataclass
 
 
 @dataclass
 class NowPlaying:
-    """Information about what song is playing now"""
+    """Information about the song that is playing now"""
     title: str
     artist: str
     album: str
