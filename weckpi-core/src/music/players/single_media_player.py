@@ -1,14 +1,15 @@
 """A player for a single media source"""
 import logging
 from pathlib import Path
+from typing import Optional
 
 from music.metadata import NowPlaying
-from music.player.base_player import BasePlayer
+from music.players.bases.single_media_base_player import SingleMediaBasePlayer
 
 logger = logging.getLogger(f'weckpi.{__name__}')
 
 
-class SingleMediaPlayer(BasePlayer):
+class SingleMediaPlayer(SingleMediaBasePlayer):
     """A player for a single media source"""
     _now_playing: NowPlaying
 
@@ -24,12 +25,11 @@ class SingleMediaPlayer(BasePlayer):
         For possible arguments, see the help of the vlc cli.
         """
         super().__init__(*args)
-        self.player = self.instance.media_player_new()
         self.set_media(media_source, now_playing)
 
-    def set_media(self, media_source: str | Path, now_playing: NowPlaying):
+    def set_media(self, media_source: str | Path, now_playing: NowPlaying) -> None:
         """Set the media source"""
-        was_playing = self.player.is_playing()
+        was_playing = self.is_playing
 
         self.media = self.instance.media_new(media_source)
         self.player.set_media(self.media)
@@ -39,15 +39,9 @@ class SingleMediaPlayer(BasePlayer):
         if was_playing:
             self.play()
 
-    def next(self) -> None:
-        """Jump to the next item in the playlist"""
-        logger.warning('Next is not supported for single media types')
-
-    def previous(self) -> None:
-        """Jump to the previous item in the playlist"""
-        logger.warning('Previous is not supported for single media types')
-
     @property
-    def now_playing(self) -> NowPlaying:
+    def now_playing(self) -> Optional[NowPlaying]:
         """Get information about the song that is playing now"""
-        return self._now_playing
+        if self.is_playing:
+            return self._now_playing
+        return None

@@ -1,23 +1,10 @@
 """The base for every vlc player"""
 from abc import ABC, abstractmethod
-from pathlib import Path
+from typing import Optional
 
 import vlc
 
-from music.metadata import NowPlaying, InternetRadioMetadataApi
-
-
-def add_argument(args: tuple[str], arg: str) -> tuple[str]:
-    """
-    Add a new argument to the list of arguments
-
-    :param args: The old list of arguments
-    :param arg: The new argument
-    :return: The new list of arguments
-    """
-    list_args = list(args)
-    list_args.append(arg)
-    return tuple(list_args)
+from music.metadata import NowPlaying
 
 
 class BasePlayer(ABC):
@@ -27,9 +14,8 @@ class BasePlayer(ABC):
     This class is an abstract class, do not instantiate it directly!
     """
     instance: vlc.Instance
-    player: vlc.MediaListPlayer | vlc.MediaPlayer
-    media: vlc.MediaList | vlc.Media
-    media_source = str | Path
+    player: vlc.MediaPlayer | vlc.MediaListPlayer
+    playlist_index: int
 
     def __init__(self, *args: str):
         """
@@ -39,10 +25,6 @@ class BasePlayer(ABC):
         For possible arguments, see the help of the vlc cli.
         """
         self.instance = vlc.Instance(args)
-
-    @abstractmethod
-    def set_media(self, media_source: str | Path, now_playing: NowPlaying | InternetRadioMetadataApi) -> None:
-        """Set the media source"""
 
     def play(self) -> None:
         """Start the playback of the media"""
@@ -66,8 +48,13 @@ class BasePlayer(ABC):
 
     @property
     @abstractmethod
-    def now_playing(self) -> NowPlaying:
+    def now_playing(self) -> Optional[NowPlaying]:
         """Get information about the song that is playing now"""
+
+    @property
+    def is_playing(self) -> bool:
+        """Get if the player is now playing"""
+        return self.player.is_playing()
 
     @property
     def volume(self) -> int:
