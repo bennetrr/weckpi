@@ -4,7 +4,7 @@ import logging
 from music.metadata import InternetRadioMetadataApi, NowPlaying
 from music.player.base_player import BasePlayer, add_argument
 
-logger = logging.getLogger('weckpi.music.player')
+logger = logging.getLogger(f'weckpi.{__name__}')
 
 
 class InternetRadioPlayer(BasePlayer):

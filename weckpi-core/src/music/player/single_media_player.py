@@ -5,7 +5,7 @@ from pathlib import Path
 from music.metadata import NowPlaying
 from music.player.base_player import BasePlayer
 
-logger = logging.getLogger('weckpi.music.player')
+logger = logging.getLogger(f'weckpi.{__name__}')
 
 
 class SingleMediaPlayer(BasePlayer):

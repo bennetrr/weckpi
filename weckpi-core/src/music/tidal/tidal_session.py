@@ -8,7 +8,7 @@ import yaml
 
 from music.tidal.search_result import SearchResult
 
-logger = logging.getLogger('weckpi.music.tidal')
+logger = logging.getLogger(f'weckpi.{__name__}')
 
 
 class TidalSession:

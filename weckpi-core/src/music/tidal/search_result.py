@@ -1,11 +1,8 @@
 """Tools for searching TIDAL"""
-import logging
 from dataclasses import dataclass
 from typing import Union
 
 import tidalapi
-
-logger = logging.getLogger('weckpi.music.tidal')
 
 
 @dataclass(repr=False, eq=False, order=False, frozen=True, kw_only=True)
