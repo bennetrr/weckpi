@@ -20,3 +20,8 @@ class InternetRadioMetadataApi(ABC):
     @abstractmethod
     def station_image(self) -> str:
         """Get the image of the station"""
+
+    @property
+    @abstractmethod
+    def song_ends(self) -> float:
+        """Get the time when the next song is played"""
