@@ -1,10 +1,9 @@
 """The base for every vlc player for multiple media sources"""
 from abc import ABC, abstractmethod
-from pathlib import Path
 
 import vlc
 
-from music.metadata import NowPlaying
+from music.metadata import PlaylistItem
 from music.players.bases.base_player import BasePlayer
 
 
@@ -16,7 +15,8 @@ class PlaylistBasePlayer(BasePlayer, ABC):
     """
     player: vlc.MediaListPlayer
     playlist: vlc.MediaList
-    media_sources: dict[str | Path, NowPlaying]
+    playlist_items: list[PlaylistItem]
+    playlist_index = 0
 
     def __init__(self, *args: str):
         """
@@ -28,16 +28,15 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         super().__init__(*args)
         self.player = self.instance.media_player_new()
         event_manager: vlc.EventManager = self.player.event_manager
-        event_manager.event_attach(vlc.EventType, self.on_next_song)
-        # https://www.olivieraubert.net/vlc/python-ctypes/doc/
+        event_manager.event_attach(vlc.EventType.MediaListPlayerNextItemSet, self.next_song_handler)
 
     @abstractmethod
-    def set_playlist(self, media_sources: dict[str | Path, NowPlaying]) -> None:
+    def set_playlist(self, items: list[PlaylistItem]) -> None:
         """Set the playlist"""
 
     @abstractmethod
-    def add_source_to_playlist(self, media_source: str | Path, now_playing: NowPlaying) -> None:
-        """Add a source to the playlist"""
+    def add_items(self, item: list[PlaylistItem]) -> None:
+        """Add an item to the playlist"""
 
     def next(self) -> None:
         """Jump to the next item in the playlist"""
@@ -47,6 +46,6 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         """Jump to the previous item in the playlist"""
         self.player.previous()
 
-    def on_next_song(self, e: vlc.Event) -> None:
+    def next_song_handler(self, e: vlc.Event) -> None:
         """Event handler for vlc when a song is ending"""
         self.playlist_index += 1

@@ -19,7 +19,7 @@ class SingleMediaBasePlayer(BasePlayer, ABC):
     """
     player: vlc.MediaPlayer
     media: vlc.Media
-    media_source = str | Path
+    mrl = str | Path
 
     def __init__(self, *args: str):
         """
@@ -32,7 +32,7 @@ class SingleMediaBasePlayer(BasePlayer, ABC):
         super().__init__(*args)
 
     @abstractmethod
-    def set_media(self, media_source: str | Path, now_playing: NowPlaying) -> None:
+    def set_media(self, mrl: str | Path, now_playing: NowPlaying) -> None:
         """Set the media source"""
 
     def next(self) -> None:

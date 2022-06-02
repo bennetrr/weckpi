@@ -1,55 +1,47 @@
 """A player for multiple media sources"""
-from pathlib import Path
 from typing import Optional
 
-import vlc
-
-from music.metadata import NowPlaying
+from music.metadata import NowPlaying, PlaylistItem
 from music.players.bases.playlist_base_player import PlaylistBasePlayer
 
 
 class PlaylistPlayer(PlaylistBasePlayer):
-    def __init__(self, media_sources: dict[str | Path, NowPlaying], *args: str):
+    def __init__(self, items: list[PlaylistItem], *args: str):
         """
         A player for multiple media sources
 
-        :param media_sources:
+        :param items: The items to initially put in the playlist
         :param args: Arguments to pass to vlc.
         For possible arguments, see the help of the vlc cli.
         """
         super().__init__(*args)
         self.player = self.instance.media_player_new()
-        self.set_playlist(media_sources)
+        self.set_playlist(items)
 
-    def set_playlist(self, media_sources: dict[str | Path, NowPlaying]) -> None:
+    def set_playlist(self, items: list[PlaylistItem]) -> None:
         """Set the playlist"""
         was_playing = self.is_playing
 
         self.playlist = self.instance.media_list_new()
         self.player.set_media_list(self.playlist)
 
-        for media_source in media_sources:
-            self.playlist.add_media(media_source)
+        for mrl in items:
+            self.playlist.add_media(mrl)
 
-        self.media_sources = media_sources
+        self.playlist_items = items
         if was_playing:
             self.play()
 
-    def add_source_to_playlist(self, media_source: str | Path, now_playing: NowPlaying) -> None:
-        """Add a source to the playlist"""
-        self.playlist.add_media(media_source)
-        self.media_sources[media_source] = now_playing
-
-    def next(self) -> None:
-        """Jump to the next item in the playlist"""
-        self.player.next()
-
-    def previous(self) -> None:
-        """Jump to the previous item in the playlist"""
-        self.player.previous()
+    def add_items(self, item: list[PlaylistItem]) -> None:
+        """Add an item to the playlist"""
+        self.playlist.add_media(item)
+        self.playlist_items.extend(item)
 
     @property
     def now_playing(self) -> Optional[NowPlaying]:
         """Get information about the song that is playing now"""
         if not self.is_playing:
             return None
+
+        current_song = self.playlist_items[self.playlist_index]
+        return current_song.now_playing

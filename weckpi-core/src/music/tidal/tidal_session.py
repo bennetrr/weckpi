@@ -1,11 +1,11 @@
 """Tools for interacting with a TIDAL session"""
 import logging
 from pathlib import Path
-from typing import Union
 
 import tidalapi
 import yaml
 
+from music.metadata import NowPlaying
 from music.tidal.search_result import SearchResult
 
 logger = logging.getLogger(f'weckpi.{__name__}')
@@ -102,7 +102,7 @@ class TidalSession:
         return results
 
     @staticmethod
-    def get_id(obj: Union[tidalapi.Artist, tidalapi.Album, tidalapi.Track, tidalapi.Video, tidalapi.Playlist]) -> str:
+    def get_id(obj: tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist) -> str:
         """
         Get the ID in the format type+id for the given object
 
@@ -125,7 +125,7 @@ class TidalSession:
         return uid
 
     def resolve_id(self, uid) \
-            -> Union[tidalapi.Artist, tidalapi.Album, tidalapi.Track, tidalapi.Video, tidalapi.Playlist]:
+            -> tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist:
         """
         Get the TIDAL object for the given ID in the format type+id
 
@@ -149,3 +149,10 @@ class TidalSession:
             raise ValueError('Unknown object type')
 
         return obj
+
+    def get_playable_data(self,
+                          obj: tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist) -> \
+            list[NowPlaying]:
+        """Get the mrl and the now playing metadata of the Tidal object"""
+        if isinstance(obj, (tidalapi.Track, tidalapi.Video)):
+            mrl = obj.
