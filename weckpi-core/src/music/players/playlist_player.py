@@ -15,7 +15,6 @@ class PlaylistPlayer(PlaylistBasePlayer):
         For possible arguments, see the help of the vlc cli.
         """
         super().__init__(*args)
-        self.player = self.instance.media_player_new()
         self.set_playlist(items)
 
     def set_playlist(self, items: list[PlaylistItem]) -> None:
@@ -25,8 +24,8 @@ class PlaylistPlayer(PlaylistBasePlayer):
         self.playlist = self.instance.media_list_new()
         self.player.set_media_list(self.playlist)
 
-        for mrl in items:
-            self.playlist.add_media(mrl)
+        for item in items:
+            self.playlist.add_media(item.mrl)
 
         self.playlist_items = items
         if was_playing:

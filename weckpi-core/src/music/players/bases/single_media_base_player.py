@@ -42,3 +42,20 @@ class SingleMediaBasePlayer(BasePlayer, ABC):
     def previous(self) -> None:
         """Jump to the previous item in the playlist (not supported)"""
         logger.warning('Previous is not supported for single media types')
+
+    @property
+    def volume(self) -> int:
+        """Get the volume of the player"""
+        return self.player.audio_get_volume()
+
+    @volume.setter
+    def volume(self, volume) -> None:
+        """
+        Set the volume of the player
+
+        :param volume: The volume in percent (0 = mute, 100 = 0dB)
+        :raises ValueError: If the given volume is out of range
+        """
+        if volume < 0 or volume > 100:
+            raise ValueError(f'The volume is out of range (0≰{volume}≰100)')
+        self.player.audio_set_volume(volume)

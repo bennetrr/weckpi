@@ -26,9 +26,10 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         For possible arguments, see the help of the vlc cli.
         """
         super().__init__(*args)
-        self.player = self.instance.media_player_new()
-        event_manager: vlc.EventManager = self.player.event_manager
-        event_manager.event_attach(vlc.EventType.MediaListPlayerNextItemSet, self.next_song_handler)
+        self.player = self.instance.media_list_player_new()
+        event_manager: vlc.EventManager = self.player.get_media_player().event_manager()
+        event_manager.event_attach(vlc.EventType.MediaPlayerMediaChanged, self.next_song_handler)
+        event_manager.event_attach(vlc.EventType.MediaPlayerPlaying, self.play_handler)
 
     @abstractmethod
     def set_playlist(self, items: list[PlaylistItem]) -> None:
@@ -49,3 +50,24 @@ class PlaylistBasePlayer(BasePlayer, ABC):
     def next_song_handler(self, e: vlc.Event) -> None:
         """Event handler for vlc when a song is ending"""
         self.playlist_index += 1
+
+    def play_handler(self, e: vlc.Event):
+        """Event handler for vlc when the player starts playing"""
+        self.playlist_index -= 1
+
+    @property
+    def volume(self) -> int:
+        """Get the volume of the player"""
+        return self.player.get_media_player().audio_get_volume()
+
+    @volume.setter
+    def volume(self, volume) -> None:
+        """
+        Set the volume of the player
+
+        :param volume: The volume in percent (0 = mute, 100 = 0dB)
+        :raises ValueError: If the given volume is out of range
+        """
+        if volume < 0 or volume > 100:
+            raise ValueError(f'The volume is out of range (0≰{volume}≰100)')
+        self.player.get_media_player().audio_set_volume(volume)

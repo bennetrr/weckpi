@@ -57,11 +57,12 @@ class BasePlayer(ABC):
         return self.player.is_playing()
 
     @property
+    @abstractmethod
     def volume(self) -> int:
         """Get the volume of the player"""
-        return self.player.audio_get_volume()
 
     @volume.setter
+    @abstractmethod
     def volume(self, volume) -> None:
         """
         Set the volume of the player
@@ -69,6 +70,3 @@ class BasePlayer(ABC):
         :param volume: The volume in percent (0 = mute, 100 = 0dB)
         :raises ValueError: If the given volume is out of range
         """
-        if volume < 0 or volume > 100:
-            raise ValueError(f'The volume is out of range (0≰{volume}≰100)')
-        self.player.audio_set_volume(volume)

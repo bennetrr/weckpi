@@ -5,7 +5,7 @@ from pathlib import Path
 import tidalapi
 import yaml
 
-from music.metadata import NowPlaying
+from music.metadata import NowPlaying, PlaylistItem
 from music.tidal.search_result import SearchResult
 
 logger = logging.getLogger(f'weckpi.{__name__}')
@@ -150,9 +150,53 @@ class TidalSession:
 
         return obj
 
-    def get_playable_data(self,
-                          obj: tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist) -> \
-            list[NowPlaying]:
-        """Get the mrl and the now playing metadata of the Tidal object"""
-        if isinstance(obj, (tidalapi.Track, tidalapi.Video)):
-            mrl = obj.
+    @staticmethod
+    def track_to_playlist_item(track: tidalapi.Track):
+        """Convert a TIDAL API track into a PlaylistItem"""
+        mrl = track.get_url()
+        title = track.name
+        artist = track.artist.name
+        album = track.album.name
+        cover = track.album.image(1280)
+
+        return PlaylistItem(
+            mrl,
+            NowPlaying(title, artist, album, cover)
+        )
+
+    @staticmethod
+    def get_playable_data(
+            obj: tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist) -> \
+            list[PlaylistItem]:
+        """Get the mrl and the now playing metadata of the TIDAL API object"""
+        if isinstance(obj, tidalapi.Video):
+            raise TypeError('Music videos are not (yet) supported')
+
+        track_to_pli = TidalSession.track_to_playlist_item
+
+        if isinstance(obj, tidalapi.Track):
+            return [track_to_pli(obj)]
+
+        if isinstance(obj, tidalapi.Playlist):
+            output_list: list[PlaylistItem] = []
+
+            for track in obj.tracks():  # TODO add offsetting
+                output_list.append(track_to_pli(track))
+
+            return output_list
+
+        if isinstance(obj, tidalapi.Artist):
+            output_list: list[PlaylistItem] = []
+
+            for track in obj.get_top_tracks():  # TODO add offsetting
+                output_list.append(track_to_pli(track))
+
+            return output_list
+
+        if isinstance(obj, tidalapi.Album):
+            output_list: list[PlaylistItem] = []
+
+            for track in obj.tracks():  # TODO add offsetting
+                output_list.append(track_to_pli(track))
+
+            return output_list
