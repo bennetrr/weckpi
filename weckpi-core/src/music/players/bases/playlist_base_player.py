@@ -86,4 +86,4 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         return self.playlist.count()
 
     def __str__(self):
-        return f'{self.now_playing} [{self.playlist_index} / {self.playlist_index}]'
+        return f'{self.now_playing} [{self.playlist_index + 1} / {self.playlist_length}]'

@@ -102,6 +102,11 @@ class TidalSession:
         results = SearchResult.from_api_result(raw_results)
         return results
 
+    def get_user_playlists(self) -> list[tidalapi.Playlist]:
+        """Get the users playlists"""
+        my_user = tidalapi.user.LoggedInUser(self.session, self.session.user.id)
+        return my_user.playlists()
+
     @staticmethod
     def get_id(obj: tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist) -> str:
         """
@@ -154,11 +159,17 @@ class TidalSession:
     @staticmethod
     def track_to_playlist_item(track: tidalapi.Track) -> PlaylistItem:
         """Convert a TIDAL API track into a PlaylistItem"""
+        if not track.available:
+            raise FileNotFoundError(
+                f'The track {track.name} by {track.artist.name} from {track.album.name} is not available')
         mrl = track.get_url()
         title = track.name
         artist = track.artist.name
         album = track.album.name
-        cover = track.album.image(1280)
+        try:
+            cover = track.album.image(1280)
+        except AttributeError:
+            cover = None
 
         return PlaylistItem(
             mrl,
@@ -183,7 +194,11 @@ class TidalSession:
             output_list: list[PlaylistItem] = []
 
             for track in obj.tracks():  # TODO: add offsetting
-                output_list.append(track_to_pli(track))
+                try:
+                    output_list.append(track_to_pli(track))
+                except FileNotFoundError:
+                    logger.warning(
+                        f'Skipped non-available track {track.name} by {track.artist.name} from {track.album.name}')
 
             return output_list
 
@@ -191,7 +206,11 @@ class TidalSession:
             output_list: list[PlaylistItem] = []
 
             for track in obj.get_top_tracks():  # TODO: add offsetting
-                output_list.append(track_to_pli(track))
+                try:
+                    output_list.append(track_to_pli(track))
+                except FileNotFoundError:
+                    logger.warning(
+                        f'Skipped non-available track {track.name} by {track.artist.name} from {track.album.name}')
 
             return output_list
 
@@ -199,7 +218,11 @@ class TidalSession:
             output_list: list[PlaylistItem] = []
 
             for track in obj.tracks():  # TODO: add offsetting
-                output_list.append(track_to_pli(track))
+                try:
+                    output_list.append(track_to_pli(track))
+                except FileNotFoundError:
+                    logger.warning(
+                        f'Skipped non-available track {track.name} by {track.artist.name} from {track.album.name}')
 
             return output_list
 
