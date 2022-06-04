@@ -1,4 +1,4 @@
-"""Tools for working with the metadata of laut.fm radio stations"""
+"""Tools for working with the metadata of Laut.FM radio stations"""
 import time
 import logging
 import requests
@@ -11,7 +11,7 @@ logger = logging.getLogger(f'weckpi.{__name__}')
 
 
 class LautFmMetadataApi(InternetRadioMetadataApi):
-    """A model for the laut.fm metadata API"""
+    """A model for the Laut.FM metadata API"""
     station_name: str
     _station_image: str = None
     _now_playing: NowPlaying
@@ -19,7 +19,7 @@ class LautFmMetadataApi(InternetRadioMetadataApi):
 
     def __init__(self, station_name: str):
         """
-        A model for the laut.fm metadata API
+        A model for the Laut.FM metadata API
 
         :param station_name: The name of the radio station to get the metadata for
         """
@@ -41,7 +41,7 @@ class LautFmMetadataApi(InternetRadioMetadataApi):
             self._song_ends = time.mktime(time.strptime(json['ends_at'], '%Y-%m-%d %H:%M:%S %z'))
             self._now_playing = NowPlaying(title, artist, album, cover)
         else:
-            logger.info('laut.fm metadata should be up-to-date, using cached data')
+            logger.info('Laut.FM metadata should be up-to-date, using cached data')
         return self._now_playing
 
     @property

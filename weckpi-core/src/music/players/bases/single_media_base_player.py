@@ -28,8 +28,8 @@ class SingleMediaBasePlayer(BasePlayer, ABC):
         :param args: Arguments to pass to vlc.
         For possible arguments, see the help of the vlc cli.
         """
-        self.player = self.instance.media_player_new()
         super().__init__(*args)
+        self.player = self.instance.media_player_new()
 
     @abstractmethod
     def set_media(self, mrl: str | Path, now_playing: NowPlaying) -> None:

@@ -12,4 +12,5 @@ disable=
     E0401, # Import error
     W0511, # TODO comments
     R0913, # Too many arguments
-    W0237  # Different argument name than Interface
+    W0237, # Different argument name than Interface
+    W1203  # Logging % formatting (doesn't work)
