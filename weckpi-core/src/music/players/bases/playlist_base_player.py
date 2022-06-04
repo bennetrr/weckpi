@@ -16,7 +16,7 @@ class PlaylistBasePlayer(BasePlayer, ABC):
     player: vlc.MediaListPlayer
     playlist: vlc.MediaList
     playlist_items: list[PlaylistItem]
-    playlist_index = 0
+    playlist_index = -1
 
     def __init__(self, *args: str):
         """
@@ -29,7 +29,7 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         self.player = self.instance.media_list_player_new()
         event_manager: vlc.EventManager = self.player.get_media_player().event_manager()
         event_manager.event_attach(vlc.EventType.MediaPlayerMediaChanged, self.next_song_handler)
-        event_manager.event_attach(vlc.EventType.MediaPlayerPlaying, self.play_handler)
+        event_manager.event_attach(vlc.EventType.MediaPlayerStopped, self.next_song_handler)
 
     @abstractmethod
     def set_playlist(self, items: list[PlaylistItem]) -> None:
@@ -53,9 +53,9 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         self.playlist_index += 1
 
     # noinspection PyUnusedLocal
-    def play_handler(self, e: vlc.Event):  # pylint: disable=W0613
-        """Event handler for vlc when the player starts playing"""
-        self.playlist_index -= 1
+    def stop_handler(self, e: vlc.Event) -> None:  # pylint: disable=W0613
+        """Event handler for vlc when the player is stopped"""
+        self.playlist_index = -1
 
     @property
     def volume(self) -> int:
