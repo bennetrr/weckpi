@@ -15,7 +15,6 @@ class BasePlayer(ABC):
     """
     instance: vlc.Instance
     player: vlc.MediaPlayer | vlc.MediaListPlayer
-    playlist_index: int
 
     def __init__(self, *args: str):
         """

@@ -47,11 +47,13 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         """Jump to the previous item in the playlist"""
         self.player.previous()
 
-    def next_song_handler(self, e: vlc.Event) -> None:
+    # noinspection PyUnusedLocal
+    def next_song_handler(self, e: vlc.Event) -> None:  # pylint: disable=W0613
         """Event handler for vlc when a song is ending"""
         self.playlist_index += 1
 
-    def play_handler(self, e: vlc.Event):
+    # noinspection PyUnusedLocal
+    def play_handler(self, e: vlc.Event):  # pylint: disable=W0613
         """Event handler for vlc when the player starts playing"""
         self.playlist_index -= 1
 
