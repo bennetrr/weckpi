@@ -9,7 +9,7 @@ from music.players.internet_radio import InternetRadioPlayer
 from music.metadata.internet_radio_metadata.lautfm_metadata import LautFmMetadataApi
 from utils.logging import format_logger
 
-logger = logging.getLogger('weckpi.e2e.tidal')
+logger = logging.getLogger('weckpi.e2e.internet_radio')
 
 if __name__ == '__main__':
     format_logger(logger)
