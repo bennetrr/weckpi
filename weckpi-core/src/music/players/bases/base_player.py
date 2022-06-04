@@ -69,3 +69,7 @@ class BasePlayer(ABC):
         :param volume: The volume in percent (0 = mute, 100 = 0dB)
         :raises ValueError: If the given volume is out of range
         """
+
+    def __str__(self):
+        """Return the now playing information as a string"""
+        return str(self.now_playing)

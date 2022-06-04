@@ -9,3 +9,7 @@ class NowPlaying:
     artist: str
     album: str
     cover: str
+
+    def __str__(self):
+        """Return the now playing information as a string"""
+        return f'{self.artist} - {self.title} (from {self.album})'

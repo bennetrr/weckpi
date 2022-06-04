@@ -28,16 +28,21 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         super().__init__(*args)
         self.player = self.instance.media_list_player_new()
         event_manager: vlc.EventManager = self.player.get_media_player().event_manager()
+
         event_manager.event_attach(vlc.EventType.MediaPlayerMediaChanged, self.next_song_handler)
-        event_manager.event_attach(vlc.EventType.MediaPlayerStopped, self.next_song_handler)
+        event_manager.event_attach(vlc.EventType.MediaPlayerStopped, self.stop_handler)
 
     @abstractmethod
     def set_playlist(self, items: list[PlaylistItem]) -> None:
         """Set the playlist"""
 
     @abstractmethod
-    def add_items(self, item: list[PlaylistItem]) -> None:
+    def add_item(self, item: PlaylistItem) -> None:
         """Add an item to the playlist"""
+
+    @abstractmethod
+    def add_items(self, items: list[PlaylistItem]) -> None:
+        """Add a list of items to the playlist"""
 
     def next(self) -> None:
         """Jump to the next item in the playlist"""
@@ -46,6 +51,7 @@ class PlaylistBasePlayer(BasePlayer, ABC):
     def previous(self) -> None:
         """Jump to the previous item in the playlist"""
         self.player.previous()
+        self.playlist_index -= 2
 
     # noinspection PyUnusedLocal
     def next_song_handler(self, e: vlc.Event) -> None:  # pylint: disable=W0613
@@ -73,3 +79,11 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         if volume < 0 or volume > 100:
             raise ValueError(f'The volume is out of range (0≰{volume}≰100)')
         self.player.get_media_player().audio_set_volume(volume)
+
+    @property
+    def playlist_length(self) -> int:
+        """Get the length of the playlist"""
+        return self.playlist.count()
+
+    def __str__(self):
+        return f'{self.now_playing} [{self.playlist_index} / {self.playlist_index}]'

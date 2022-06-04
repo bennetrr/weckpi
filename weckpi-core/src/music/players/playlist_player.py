@@ -24,18 +24,22 @@ class PlaylistPlayer(PlaylistBasePlayer):
 
         self.playlist = self.instance.media_list_new()
         self.player.set_media_list(self.playlist)
+        self.playlist_items = []
 
-        for item in items:
-            self.playlist.add_media(item.mrl)
+        self.add_items(items)
 
-        self.playlist_items = items
         if was_playing:
             self.play()
 
-    def add_items(self, item: list[PlaylistItem]) -> None:
+    def add_item(self, item: PlaylistItem) -> None:
         """Add an item to the playlist"""
-        self.playlist.add_media(item)
-        self.playlist_items.extend(item)
+        self.playlist.add_media(item.mrl)
+        self.playlist_items.append(item)
+
+    def add_items(self, items: list[PlaylistItem]) -> None:
+        """Add a list of items to the playlist"""
+        for item in items:
+            self.add_item(item)
 
     @property
     def now_playing(self) -> Optional[NowPlaying]:
