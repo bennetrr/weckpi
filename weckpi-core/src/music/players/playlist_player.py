@@ -7,6 +7,7 @@ from music.players.bases.playlist_base_player import PlaylistBasePlayer
 
 
 class PlaylistPlayer(PlaylistBasePlayer):
+    """A player for multiple media sources"""
     def __init__(self, items: list[PlaylistItem], *args: str):
         """
         A player for multiple media sources

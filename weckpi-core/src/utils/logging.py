@@ -6,17 +6,17 @@ import sys
 def format_logger(logger: logging.Logger) -> None:
     """Apply formatting rules on the logger"""
     logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('[%(levelname)s | %(name)s] %(message)s')
+    formatter = logging.Formatter('[{levelname} | {name}] {message}', style='{')
 
     # The handler h1 logs only debug and info to stdout
-    h1 = logging.StreamHandler(sys.stdout)
-    h1.addFilter(lambda record: record.levelno <= logging.INFO)
-    h1.setFormatter(formatter)
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.addFilter(lambda record: record.levelno <= logging.INFO)
+    stdout_handler.setFormatter(formatter)
 
     # The handler h2 logs only warning, error and exception to stderr
-    h2 = logging.StreamHandler()
-    h2.setLevel(logging.WARNING)
-    h2.setFormatter(formatter)
+    stderr_handler = logging.StreamHandler()
+    stderr_handler.setLevel(logging.WARNING)
+    stderr_handler.setFormatter(formatter)
 
-    logger.addHandler(h1)
-    logger.addHandler(h2)
+    logger.addHandler(stdout_handler)
+    logger.addHandler(stderr_handler)

@@ -1,3 +1,6 @@
+"""Utilitys for the music module"""
+
+
 def add_vlc_argument(args: tuple[str], arg: str) -> tuple[str]:
     """
     Add a new argument to the list of arguments
