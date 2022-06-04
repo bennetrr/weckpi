@@ -5,7 +5,7 @@ from pathlib import Path
 
 import vlc
 
-from music.metadata import NowPlaying
+from music.metadata.now_playing import NowPlaying
 from music.players.bases.base_player import BasePlayer
 
 logger = logging.getLogger(f'weckpi.{__name__}')

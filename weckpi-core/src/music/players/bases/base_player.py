@@ -4,7 +4,7 @@ from typing import Optional
 
 import vlc
 
-from music.metadata import NowPlaying
+from music.metadata.now_playing import NowPlaying
 
 
 class BasePlayer(ABC):

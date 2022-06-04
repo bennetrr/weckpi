@@ -1,7 +1,8 @@
 """A player for multiple media sources"""
 from typing import Optional
 
-from music.metadata import NowPlaying, PlaylistItem
+from music.metadata.now_playing import NowPlaying
+from music.metadata.playlist_item import PlaylistItem
 from music.players.bases.playlist_base_player import PlaylistBasePlayer
 
 

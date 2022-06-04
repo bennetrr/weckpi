@@ -5,7 +5,8 @@ from pathlib import Path
 import tidalapi
 import yaml
 
-from music.metadata import NowPlaying, PlaylistItem
+from music.metadata.now_playing import NowPlaying
+from music.metadata.playlist_item import PlaylistItem
 from music.tidal.search_result import SearchResult
 
 logger = logging.getLogger(f'weckpi.{__name__}')

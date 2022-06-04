@@ -5,10 +5,10 @@ import tidalapi
 from rich import print as rich_print
 from rich.table import Table
 
-from music import tidal
+from music.tidal.tidal_session import TidalSession
 
 # Log in to TIDAL
-session = tidal.TidalSession().login(Path('tidal_credential.yaml'))
+session = TidalSession().login(Path('tidal_credential.yaml'))
 
 # Print out the users playlists
 my_user = tidalapi.user.LoggedInUser(session, session.user.id)

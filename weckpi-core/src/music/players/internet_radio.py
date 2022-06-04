@@ -2,7 +2,8 @@
 import logging
 from typing import Optional
 
-from music.metadata import InternetRadioMetadataApi, NowPlaying
+from music.metadata.internet_radio_metadata.lautfm_metadata import InternetRadioMetadataApi
+from music.metadata.now_playing import NowPlaying
 from music.players.bases.single_media_base_player import SingleMediaBasePlayer
 from music.utils import add_vlc_argument
 

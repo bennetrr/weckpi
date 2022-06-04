@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 import vlc
 
-from music.metadata import PlaylistItem
+from music.metadata.playlist_item import PlaylistItem
 from music.players.bases.base_player import BasePlayer
 
 

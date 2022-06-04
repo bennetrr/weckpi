@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from music.metadata import NowPlaying
+from music.metadata.now_playing import NowPlaying
 from music.players.bases.single_media_base_player import SingleMediaBasePlayer
 
 logger = logging.getLogger(f'weckpi.{__name__}')
