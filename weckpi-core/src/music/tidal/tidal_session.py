@@ -190,7 +190,7 @@ class TidalSession:
         if isinstance(obj, tidalapi.Track):
             return [track_to_pli(obj)]
 
-        if isinstance(obj, tidalapi.Playlist):
+        if isinstance(obj, (tidalapi.Playlist, tidalapi.Album)):
             output_list: list[PlaylistItem] = []
 
             for track in obj.tracks():  # TODO: add offsetting
@@ -206,18 +206,6 @@ class TidalSession:
             output_list: list[PlaylistItem] = []
 
             for track in obj.get_top_tracks():  # TODO: add offsetting
-                try:
-                    output_list.append(track_to_pli(track))
-                except FileNotFoundError:
-                    logger.warning(
-                        f'Skipped non-available track {track.name} by {track.artist.name} from {track.album.name}')
-
-            return output_list
-
-        if isinstance(obj, tidalapi.Album):
-            output_list: list[PlaylistItem] = []
-
-            for track in obj.tracks():  # TODO: add offsetting
                 try:
                     output_list.append(track_to_pli(track))
                 except FileNotFoundError:
