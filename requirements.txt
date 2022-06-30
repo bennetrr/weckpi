@@ -1,5 +1,4 @@
-pyyaml
-requests
-rich
-python-vlc
-git+https://github.com/tamland/python-tidal@0.7.x
+pyyaml==6.0
+requests==2.28.1
+python-vlc==3.0.16120
+tidalapi==0.7.0rc1

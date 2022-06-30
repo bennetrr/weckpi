@@ -36,8 +36,7 @@ class TidalSession:
             # TODO: Save the new token if the token needs to be refreshed
             with credential_file.open('r') as f:
                 tidal_credential = yaml.load(f, yaml.SafeLoader)
-            self.session.load_oauth_session(tidal_credential['session_id'],
-                                            tidal_credential['token_type'],
+            self.session.load_oauth_session(tidal_credential['token_type'],
                                             tidal_credential['access_token'],
                                             tidal_credential['refresh_token'])
 

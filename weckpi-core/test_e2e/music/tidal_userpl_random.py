@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     synthpop_playlist: tidalapi.Playlist | None = None
     for user_playlist in user_playlists:
-        if user_playlist.name == 'Epidemic & co':
+        if user_playlist.name == 'Synthpop':
             synthpop_playlist = user_playlist
 
     if synthpop_playlist is None:
