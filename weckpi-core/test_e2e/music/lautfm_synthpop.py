@@ -1,4 +1,3 @@
-# pylint: disable=R0801
 """
 End-to-end test initializer for internet radio using Synthpop Radio @ Laut.FM
 

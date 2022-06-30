@@ -13,4 +13,5 @@ disable=
     W0511, # TODO comments
     R0913, # Too many arguments
     W0237, # Different argument name than Interface
-    W1203  # Logging % formatting (doesn't work)
+    W1203, # Logging % formatting (doesn't work)
+    R0801  # Duplicated code
