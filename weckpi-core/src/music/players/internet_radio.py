@@ -5,7 +5,7 @@ from typing import Optional
 from music.metadata.internet_radio_metadata.lautfm_metadata import InternetRadioMetadataApi
 from music.metadata.now_playing import NowPlaying
 from music.players.bases.single_media_base_player import SingleMediaBasePlayer
-from music.music_utils import add_vlc_argument
+from utils.music import add_vlc_argument
 
 logger = logging.getLogger(f'weckpi.{__name__}')
 
@@ -22,7 +22,7 @@ class InternetRadioPlayer(SingleMediaBasePlayer):
         Can be a URL to a local / remote file in a format that is supported by vlc.
         :param metadata_api: An object of the model for the internet radio provider's metadata API.
         :param args: Arguments to pass to vlc.
-        For possible arguments, see the help of the vlc cli.
+        For possible arguments, see vlc --help
         """
         args = add_vlc_argument(args, '--input-repeat=-1')
         super().__init__(*args)

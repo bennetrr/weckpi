@@ -22,7 +22,7 @@ class SingleMediaPlayer(SingleMediaBasePlayer):
         :param now_playing: Information about what this player's media is.
         Since the media is static (only one source), the information will also be.
         :param args: Arguments to pass to vlc.
-        For possible arguments, see the help of the vlc cli.
+        For possible arguments, see vlc --help
         """
         super().__init__(*args)
         self.set_media(mrl, now_playing)
