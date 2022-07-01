@@ -8,7 +8,7 @@ from pathlib import Path
 
 import tidalapi
 
-from music.players.random_playlist_player import RandomPlaylistPlayer
+from music.players.playlist_player import PlaylistPlayer as RandomPlaylistPlayer
 from music.tidal.tidal_session import TidalSession
 from utils.logging import format_logger
 

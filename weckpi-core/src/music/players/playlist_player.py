@@ -1,7 +1,4 @@
 """A player for multiple media sources"""
-from typing import Optional
-
-from music.metadata.now_playing import NowPlaying
 from music.metadata.playlist_item import PlaylistItem
 from music.players.bases.playlist_base_player import PlaylistBasePlayer
 
@@ -23,30 +20,15 @@ class PlaylistPlayer(PlaylistBasePlayer):
         """Set the playlist"""
         was_playing = self.is_playing
 
-        self.playlist = self.instance.media_list_new()
-        self.player.set_media_list(self.playlist)
-        self.playlist_items = []
-
-        self.add_items(items)
+        self.playlist = items
 
         if was_playing:
             self.play()
 
     def add_item(self, item: PlaylistItem) -> None:
         """Add an item to the playlist"""
-        self.playlist.add_media(item.mrl)
-        self.playlist_items.append(item)
+        self.playlist.append(item)
 
     def add_items(self, items: list[PlaylistItem]) -> None:
         """Add a list of items to the playlist"""
-        for item in items:
-            self.add_item(item)
-
-    @property
-    def now_playing(self) -> Optional[NowPlaying]:
-        """Get information about the song that is playing now"""
-        if not self.is_playing:
-            return None
-
-        current_song = self.playlist_items[self.playlist_index]
-        return current_song.now_playing
+        self.playlist.extend(items)

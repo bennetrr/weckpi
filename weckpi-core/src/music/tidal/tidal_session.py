@@ -161,7 +161,7 @@ class TidalSession:
         if not track.available:
             raise FileNotFoundError(
                 f'The track {track.name} by {track.artist.name} from {track.album.name} is not available')
-        mrl = track.get_url()
+        mrl = f'tidal+track+{track.id}'
         title = track.name
         artist = track.artist.name
         album = track.album.name

@@ -57,12 +57,3 @@ class RandomPlaylistPlayer(PlaylistBasePlayer):
         """Stop the playback of the media and reset the media"""
         super().stop()
         self.set_playlist(self.playlist_items)
-
-    @property
-    def now_playing(self) -> Optional[NowPlaying]:
-        """Get information about the song that is playing now"""
-        if not self.is_playing:
-            return None
-
-        current_song = self.playlist_items[self.playlist_index]
-        return current_song.now_playing
