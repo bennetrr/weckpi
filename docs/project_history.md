@@ -23,9 +23,9 @@ The current version is v1.2.1.
 
 ### Hardware
 
-<img alt="A picture of the WeckPi v1 from the top" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/P1000895.jpg" title="WeckPi v1 top view" width="30%"/>
-<img alt="A picture of the WeckPi v1 from the front" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/P1000916.jpg" title="WeckPi v1 front view" width="30%"/>
-<img alt="The circuit plan of the WeckPi v1" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/assets/weckpi-v1/WeckPi_Steckplatine.png" title="WeckPi v1 circuit plan" width="30%"/>
+<img alt="A picture of the WeckPi v1 from the top" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/docs/assets/weckpi-v1/P1000895.jpg" title="WeckPi v1 top view" width="30%"/>
+<img alt="A picture of the WeckPi v1 from the front" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/docs/assets/weckpi-v1/P1000916.jpg" title="WeckPi v1 front view" width="30%"/>
+<img alt="The circuit plan of the WeckPi v1" height="30%" src="https://raw.githubusercontent.com/bennetrr/weckpi/main/docs/assets/weckpi-v1/WeckPi_Steckplatine.png" title="WeckPi v1 circuit plan" width="30%"/>
 
 The main part of the hardware of WeckPi v1 is a [Raspberry Pi 3B+](https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/).
 
