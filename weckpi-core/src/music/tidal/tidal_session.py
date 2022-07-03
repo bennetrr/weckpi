@@ -11,6 +11,8 @@ from music.tidal.search_result import SearchResult
 
 logger = logging.getLogger(f'weckpi.{__name__}')
 
+TidalModels = tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist
+
 
 class TidalSession:
     """Represents a session with the TIDAL API"""
@@ -106,62 +108,112 @@ class TidalSession:
         my_user = tidalapi.user.LoggedInUser(self.session, self.session.user.id)
         return my_user.playlists()
 
-    @staticmethod
-    def get_id(obj: tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist) -> str:
+    # Saving and playback
+    # noinspection PyMethodMayBeStatic
+    def get_uri(self, obj: TidalModels) -> str:  # pylint: disable=R6301
         """
-        Get the ID in the format type+id for the given object
+        Get the URI in the format ``tidal:<type>:<id>`` for the given object
 
-        :param obj: An object of the TIDAL API
-        :return: The ID
-        :raises ValueError: If the object is not of the TIDAL API
+        :raises TypeError: If the object is not a model of the TIDAL API
         """
         if isinstance(obj, tidalapi.Artist):
-            uid = f'artist+{obj.id}'
+            uid = f'tidal:artist:{obj.id}'
         elif isinstance(obj, tidalapi.Album):
-            uid = f'album+{obj.id}'
+            uid = f'tidal:album:{obj.id}'
         elif isinstance(obj, tidalapi.Track):
-            uid = f'track+{obj.id}'
+            uid = f'tidal:track:{obj.id}'
         elif isinstance(obj, tidalapi.Video):
-            uid = f'video+{obj.id}'
+            uid = f'tidal:video:{obj.id}'
         elif isinstance(obj, tidalapi.Playlist):
-            uid = f'playlist+{obj.id}'
+            uid = f'tidal:playlist:{obj.id}'
         else:
-            raise ValueError('Unknown object type')
+            raise TypeError(f'The given object ({str(type(obj))}) is not a TIDAL API model')
         return uid
 
-    def resolve_id(self, uid) \
-            -> tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist:
+    # noinspection PyMethodMayBeStatic
+    def get_mrl(self, obj: tidalapi.Track | tidalapi.Video) -> str:  # pylint: disable=R6301
         """
-        Get the TIDAL object for the given ID in the format type+id
+        Get the MRL for the given track or video
 
-        :param uid: The ID
-        :return: The TIDAL object
-        :raises ValueError: If the ID is not in the correct format
+        :raises TypeError: If the object is not a TIDAL API track or a video
+        :raises FileNotFoundError: If the track or video is not available on TIDAL
         """
-        model_type, new_uid = uid.split('+')
+        if not isinstance(obj, (tidalapi.Track, tidalapi.Video)):
+            raise TypeError(f'The given object ({str(type(obj))}) is not a TIDAL API track or video')
+
+        # Check if the track / video is available on TIDAL
+        if not obj.available:
+            raise FileNotFoundError(
+                f'The track {obj.name} by {obj.artist.name} from {obj.album.name} is not available')
+
+        mrl = obj.get_url()
+        return mrl
+
+    def get_mrls(self, obj: TidalModels | list[TidalModels]) -> list[str]:
+        """
+        Get the MRLs for the given object
+
+        :raises TypeError: If the object is not a TIDAL API model or a list of TIDAL API models
+        """
+        # TODO: Check for availability
+        # TODO: add offsetting
+        if isinstance(obj, tidalapi.Artist):
+            out = [self.get_mrl(item) for item in obj.get_top_tracks()]
+        elif isinstance(obj, (tidalapi.Album, tidalapi.Playlist)):
+            out = [self.get_mrl(item) for item in obj.tracks()]
+        elif isinstance(obj, (tidalapi.Track, tidalapi.Video)):
+            out = [self.get_mrl(obj)]
+        elif isinstance(obj, list):
+            out = []
+            for item in obj:
+                out.extend(self.get_mrls(item))
+        else:
+            raise TypeError(
+                f'The given object ({str(type(obj))}) is not a TIDAL API model or a list of TIDAL API models')
+        return out
+
+    def resolve_uri(self, uri: str) -> TidalModels:
+        """
+        Get the TIDAL API object for the given URI
+
+        :raises ValueError: If the URI is not in the correct format
+        """
+        uri_parts = uri.split(':', 2)
+
+        if len(uri_parts) != 3:
+            raise ValueError(f'The given URI ({uri}) is not in the correct format')
+
+        prefix, model_type, uid = uri_parts
+
+        if prefix != 'tidal':
+            raise ValueError(f'The given URI ({uri}) is not in the correct format (does not begin with \'tidal:\')')
 
         if model_type == 'artist':
-            obj = self.session.artist(new_uid)
+            obj = self.session.artist(uid)
         elif model_type == 'album':
-            obj = self.session.album(new_uid)
+            obj = self.session.album(uid)
         elif model_type == 'track':
-            obj = self.session.track(new_uid)
+            obj = self.session.track(uid)
         elif model_type == 'video':
-            obj = self.session.video(new_uid)
+            obj = self.session.video(uid)
         elif model_type == 'playlist':
-            obj = self.session.playlist(new_uid)
+            obj = self.session.playlist(uid)
         else:
-            raise ValueError('Unknown object type')
-
+            raise ValueError(f'Unknown model type {model_type})')
         return obj
 
-    @staticmethod
-    def track_to_playlist_item(track: tidalapi.Track) -> PlaylistItem:
-        """Convert a TIDAL API track into a PlaylistItem"""
-        if not track.available:
-            raise FileNotFoundError(
-                f'The track {track.name} by {track.artist.name} from {track.album.name} is not available')
-        mrl = f'tidal+track+{track.id}'
+    # noinspection PyMethodMayBeStatic
+    def track_to_pli(self, track: tidalapi.Track | tidalapi.Video) -> PlaylistItem:  # pylint: disable=R6301
+        """
+        Get the playlist item object for the given track
+
+        :raises TypeError: If the given object is not a TIDAL API track or video
+        :raises FileNotFoundError: If the track is not available on TIDAL
+        """
+        if not isinstance(track, tidalapi.Track):
+            raise TypeError(f'The given object ({str(type(track))}) is not a TIDAL API track')
+
+        mrl = self.get_uri(track)
         title = track.name
         artist = track.artist.name
         album = track.album.name
@@ -175,50 +227,42 @@ class TidalSession:
             NowPlaying(title, artist, album, cover)
         )
 
-    @staticmethod
-    def get_playable_data(
-            obj: tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist |
-                 list[tidalapi.Artist | tidalapi.Album | tidalapi.Track | tidalapi.Video | tidalapi.Playlist]) -> \
-            list[PlaylistItem]:
-        """Get the mrl and the now playing metadata of the TIDAL API object"""
-        if isinstance(obj, tidalapi.Video):
-            raise TypeError('Music videos are not (yet) supported')
+    # noinspection PyMethodMayBeStatic
+    def get_playlist_item(self, obj: TidalModels | list[TidalModels]) -> list[PlaylistItem]:  # pylint: disable=R6301
+        """
+        Get the playlist items object (NowPlaying-data + URI) for the given object
 
-        track_to_pli = TidalSession.track_to_playlist_item
+        :raises TypeError: If the object is not a TIDAL API model or a list of TIDAL API models
+        :raises FileNotFoundError: If the object is an unavailable track or video
+        """
+        # TODO: add offsetting
+        plis = []
 
-        if isinstance(obj, tidalapi.Track):
-            return [track_to_pli(obj)]
+        if isinstance(obj, tidalapi.Track | tidalapi.Video):
+            plis.append(self.track_to_pli(obj))
 
-        if isinstance(obj, (tidalapi.Playlist, tidalapi.Album)):
-            output_list: list[PlaylistItem] = []
-
-            for track in obj.tracks():  # TODO: add offsetting
+        elif isinstance(obj, tidalapi.Artist):
+            for track in obj.get_top_tracks():
                 try:
-                    output_list.append(track_to_pli(track))
+                    plis.append(self.track_to_pli(track))
                 except FileNotFoundError:
                     logger.warning(
                         f'Skipped non-available track {track.name} by {track.artist.name} from {track.album.name}')
 
-            return output_list
-
-        if isinstance(obj, tidalapi.Artist):
-            output_list: list[PlaylistItem] = []
-
-            for track in obj.get_top_tracks():  # TODO: add offsetting
+        elif isinstance(obj, (tidalapi.Album, tidalapi.Playlist)):
+            for track in obj.tracks():
                 try:
-                    output_list.append(track_to_pli(track))
+                    plis.append(self.track_to_pli(track))
                 except FileNotFoundError:
                     logger.warning(
                         f'Skipped non-available track {track.name} by {track.artist.name} from {track.album.name}')
 
-            return output_list
-
-        if isinstance(obj, list):
-            output_list: list[PlaylistItem] = []
-
+        elif isinstance(obj, list):
             for item in obj:
-                output_list.extend(TidalSession.get_playable_data(item))
+                plis.extend(self.get_playlist_item(item))
 
-            return output_list
+        else:
+            raise TypeError(
+                f'The given object ({str(type(obj))}) is not a TIDAL API model or a list of TIDAL API models')
 
-        raise TypeError(f'Unsupported TIDAL API model: {type(obj)}')
+        return plis

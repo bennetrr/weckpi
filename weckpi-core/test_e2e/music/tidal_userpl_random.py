@@ -23,7 +23,7 @@ if __name__ == '__main__':
     session = TidalSession().login(Path('tidal.credential.yaml'))
     logger.debug('Login successful')
 
-    # Get the users playlists and select the one with the name "Synthpop"
+    # Get the user's playlists and select the one with the name "Synthpop"
     user_playlists = session.get_user_playlists()
 
     synthpop_playlist: tidalapi.Playlist | None = None
@@ -32,12 +32,12 @@ if __name__ == '__main__':
             synthpop_playlist = user_playlist
 
     if synthpop_playlist is None:
-        raise AssertionError('Synthpop playlist not found')
+        raise FileNotFoundError('Synthpop playlist not found')
 
     logger.debug(f'Found Synthpop playlist with {len(synthpop_playlist.tracks())} tracks')
 
     # Convert the playlist in our format
-    playlist = session.get_playable_data(synthpop_playlist)
+    playlist = session.get_playlist_item(synthpop_playlist)
 
     # Create a new player and play the album
     player = RandomPlaylistPlayer(playlist)
