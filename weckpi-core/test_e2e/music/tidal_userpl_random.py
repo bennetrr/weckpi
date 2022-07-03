@@ -8,7 +8,7 @@ from pathlib import Path
 
 import tidalapi
 
-from music.players.playlist_player import PlaylistPlayer as RandomPlaylistPlayer
+from music.players.playlist_player import PlaylistPlayer
 from music.tidal.tidal_session import TidalSession
 from utils.logging import format_logger
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     playlist = session.get_playlist_item(synthpop_playlist)
 
     # Create a new player and play the album
-    player = RandomPlaylistPlayer(playlist)
+    player = PlaylistPlayer(playlist, tidal_session=session)
     player.play()
 
     logger.info('Test initialisation finished')

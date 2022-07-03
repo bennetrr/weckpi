@@ -57,6 +57,11 @@ class BasePlayer(ABC):
         return self.player.is_playing()
 
     @property
+    def position(self) -> float:
+        """Get the position of the playback in percent"""
+        return self.player.get_position() * 100
+
+    @property
     def volume(self) -> int:
         """Get the volume of the player"""
         return self.player.audio_get_volume()

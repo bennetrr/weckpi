@@ -27,10 +27,10 @@ if __name__ == '__main__':
     logger.debug(f'Searched for VNV Nation, first album: {album.name} with {len(album.tracks())} tracks')
 
     # Convert the album in our format
-    playlist = session.get_playable_data(album)
+    playlist = session.get_playlist_item(album)
 
     # Create a new player and play the album
-    player = PlaylistPlayer(playlist)
+    player = PlaylistPlayer(playlist, tidal_session=session)
     player.play()
 
     logger.info('Test initialisation finished')

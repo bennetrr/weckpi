@@ -1,6 +1,5 @@
 """A player for a single media source"""
 import logging
-from pathlib import Path
 from typing import Optional
 
 from music.metadata.now_playing import NowPlaying
@@ -13,7 +12,7 @@ class SingleMediaPlayer(SingleMediaBasePlayer):
     """A player for a single media source"""
     _now_playing: NowPlaying
 
-    def __init__(self, mrl: str | Path, now_playing: NowPlaying, *args: str):
+    def __init__(self, mrl: str, now_playing: NowPlaying, *args: str):
         """
         A player for a single media source
 
@@ -27,7 +26,7 @@ class SingleMediaPlayer(SingleMediaBasePlayer):
         super().__init__(*args)
         self.set_media(mrl, now_playing)
 
-    def set_media(self, mrl: str | Path, now_playing: NowPlaying) -> None:
+    def set_media(self, mrl: str, now_playing: NowPlaying) -> None:
         """Set the media source"""
         was_playing = self.is_playing
 

@@ -1,7 +1,6 @@
 """The base for every vlc player for single media sources"""
 import logging
 from abc import ABC, abstractmethod
-from pathlib import Path
 
 import vlc
 
@@ -18,7 +17,7 @@ class SingleMediaBasePlayer(BasePlayer, ABC):
     This class is an abstract class, do not instantiate it directly!
     """
     media: vlc.Media
-    mrl = str | Path
+    mrl = str
 
     def __init__(self, *args: str):
         """
@@ -30,7 +29,7 @@ class SingleMediaBasePlayer(BasePlayer, ABC):
         super().__init__(*args)
 
     @abstractmethod
-    def set_media(self, mrl: str | Path, now_playing: NowPlaying) -> None:
+    def set_media(self, mrl: str, now_playing: NowPlaying) -> None:
         """Set the media source"""
 
     def next(self) -> None:
