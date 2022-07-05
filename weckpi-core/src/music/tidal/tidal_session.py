@@ -110,7 +110,7 @@ class TidalSession:
 
     # Saving and playback
     # noinspection PyMethodMayBeStatic
-    def get_uri(self, obj: TidalModels) -> str:  # pylint: disable=no-self-use
+    def get_uri(self, obj: TidalModels) -> str:
         """
         Get the URI in the format ``tidal:<type>:<id>`` for the given object
 
@@ -131,7 +131,7 @@ class TidalSession:
         return uid
 
     # noinspection PyMethodMayBeStatic
-    def get_mrl(self, obj: tidalapi.Track | tidalapi.Video) -> str:  # pylint: disable=no-self-use
+    def get_mrl(self, obj: tidalapi.Track | tidalapi.Video) -> str:
         """
         Get the MRL for the given track or video
 
@@ -203,7 +203,7 @@ class TidalSession:
         return obj
 
     # noinspection PyMethodMayBeStatic
-    def track_to_pli(self, track: tidalapi.Track | tidalapi.Video) -> PlaylistItem:  # pylint: disable=no-self-use
+    def track_to_pli(self, track: tidalapi.Track | tidalapi.Video) -> PlaylistItem:
         """
         Get the playlist item object for the given track
 
@@ -229,7 +229,7 @@ class TidalSession:
 
     # noinspection PyMethodMayBeStatic
     def get_playlist_item(self, obj: TidalModels | list[TidalModels]) -> list[
-        PlaylistItem]:  # pylint: disable=no-self-use
+        PlaylistItem]:
         """
         Get the playlist items object (NowPlaying-data + URI) for the given object
 
