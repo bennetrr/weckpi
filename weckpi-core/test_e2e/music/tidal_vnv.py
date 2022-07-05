@@ -35,3 +35,4 @@ if __name__ == '__main__':
 
     logger.info('Test initialisation finished')
     logger.info('You can now start to test the player')
+    logger.info('You also need to call \'player.event_loop()\' sometimes to trigger event based actions')

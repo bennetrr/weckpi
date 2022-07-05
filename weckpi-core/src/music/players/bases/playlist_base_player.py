@@ -26,6 +26,9 @@ class PlaylistBasePlayer(BasePlayer, ABC):
     tidal_session: TidalSession
     disable_stop_handler = False
 
+    # Event handling
+    media_player_stopped_triggered = False
+
     def __init__(self, playlist: list[PlaylistItem], *args: str, tidal_session: TidalSession = None):
         """
         A player for a multiple media sources in a playlist
@@ -40,7 +43,7 @@ class PlaylistBasePlayer(BasePlayer, ABC):
 
         self.event_manager = self.player.event_manager()
         # noinspection PyUnresolvedReferences
-        self.event_manager.event_attach(vlc.EventType.MediaPlayerStopped, self.track_ended_handler)
+        self.event_manager.event_attach(vlc.EventType.MediaPlayerStopped, self.media_player_stopped_handler)
 
         self.set_playlist(playlist)
         self.load_item()
@@ -66,9 +69,8 @@ class PlaylistBasePlayer(BasePlayer, ABC):
     def next(self) -> None:
         """Jump to the next item in the playlist"""
         # Check if we're not already at the end of the playlist
-        print('Next called')
         if self.playlist_index + 1 >= len(self.playlist):
-            print('End of playlist reached!')
+            logger.info('End of playlist reached!')
             return
 
         self.playlist_index += 1
@@ -95,7 +97,7 @@ class PlaylistBasePlayer(BasePlayer, ABC):
     def jump_to(self, index: int) -> None:
         """Jump to a specific item in the playlist"""
         if index < 0 or index >= len(self.playlist):
-            logger.info('Invalid index!')
+            logger.error('Invalid index!')
             return
 
         self.playlist_index = index
@@ -106,15 +108,9 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         self.disable_stop_handler = False
 
     # noinspection PyUnusedLocal
-    def track_ended_handler(self, e: vlc.Event) -> None:  # pylint: disable=W0613
+    def media_player_stopped_handler(self, e: vlc.Event) -> None:  # pylint: disable=W0613
         """Event handler for when the track ended"""
-        # TODO: Get logging to work and replace the print
-        # TODO: Does not work because libvlc cannot be called from an event handler
-        print('Stopped handler called')
-        if self.disable_stop_handler:
-            return
-        print('Track ended!')
-        self.next()
+        self.media_player_stopped_triggered = True
 
     @property
     def playlist_length(self) -> int:
@@ -132,3 +128,12 @@ class PlaylistBasePlayer(BasePlayer, ABC):
 
     def __str__(self):
         return f'{self.now_playing} [{self.playlist_index + 1} / {self.playlist_length}]'
+
+    # Event handling
+    def event_loop(self) -> None:
+        """Event loop for the player"""
+        # MediaPlayerStopped
+        if self.media_player_stopped_triggered:
+            if not self.disable_stop_handler:
+                self.next()
+        self.media_player_stopped_triggered = False
