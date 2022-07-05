@@ -19,15 +19,6 @@ class SingleMediaBasePlayer(BasePlayer, ABC):
     media: vlc.Media
     mrl = str
 
-    def __init__(self, *args: str):
-        """
-        The base for every vlc player for single media sources
-
-        :param args: Arguments to pass to vlc.
-        For possible arguments, see vlc --help
-        """
-        super().__init__(*args)
-
     @abstractmethod
     def set_media(self, mrl: str, now_playing: NowPlaying) -> None:
         """Set the media source"""
