@@ -107,10 +107,10 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         self.play()
         self.disable_stop_handler = False
 
-    # noinspection PyUnusedLocal
-    def media_player_stopped_handler(self, e: vlc.Event) -> None:  # pylint: disable=W0613
-        """Event handler for when the track ended"""
-        self.media_player_stopped_triggered = True
+    def stop(self) -> None:
+        """Stop the playback of the media and reset the media"""
+        super().stop()
+        self.set_playlist(self.playlist)
 
     @property
     def playlist_length(self) -> int:
@@ -137,3 +137,8 @@ class PlaylistBasePlayer(BasePlayer, ABC):
             if not self.disable_stop_handler:
                 self.next()
         self.media_player_stopped_triggered = False
+
+    # noinspection PyUnusedLocal
+    def media_player_stopped_handler(self, e: vlc.Event) -> None:  # pylint: disable=W0613
+        """Event handler for when the track ended"""
+        self.media_player_stopped_triggered = True
