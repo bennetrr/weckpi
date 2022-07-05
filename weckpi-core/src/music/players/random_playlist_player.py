@@ -7,6 +7,7 @@ from music.players.bases.playlist_base_player import PlaylistBasePlayer
 
 class RandomPlaylistPlayer(PlaylistBasePlayer):
     """A player for multiple media sources in random order"""
+
     def set_playlist(self, items: list[PlaylistItem]) -> None:
         """Set the playlist"""
         was_playing = self.is_playing

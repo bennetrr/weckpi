@@ -5,8 +5,8 @@ Run this script with the IntelliJ Python Console to interact with the player
 """
 import logging
 
-from music.players.internet_radio import InternetRadioPlayer
 from music.metadata.internet_radio_metadata.lautfm_metadata import LautFmMetadataApi
+from music.players.internet_radio import InternetRadioPlayer
 from utils.logging import format_logger
 
 logger = logging.getLogger('weckpi.e2e.internet_radio')

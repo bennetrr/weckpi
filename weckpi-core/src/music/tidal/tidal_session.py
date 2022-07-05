@@ -228,7 +228,8 @@ class TidalSession:
         )
 
     # noinspection PyMethodMayBeStatic
-    def get_playlist_item(self, obj: TidalModels | list[TidalModels]) -> list[PlaylistItem]:  # pylint: disable=no-self-use
+    def get_playlist_item(self, obj: TidalModels | list[TidalModels]) -> list[
+        PlaylistItem]:  # pylint: disable=no-self-use
         """
         Get the playlist items object (NowPlaying-data + URI) for the given object
 

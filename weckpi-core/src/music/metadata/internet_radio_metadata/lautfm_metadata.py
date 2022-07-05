@@ -1,11 +1,11 @@
 """Tools for working with the metadata of Laut.FM radio stations"""
-import time
 import logging
+import time
+
 import requests
 
 from music.metadata.internet_radio_metadata.internet_radio_metadata import InternetRadioMetadataApi
 from music.metadata.now_playing import NowPlaying
-
 
 logger = logging.getLogger(f'weckpi.{__name__}')
 
