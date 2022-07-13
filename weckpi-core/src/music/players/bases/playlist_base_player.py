@@ -49,7 +49,7 @@ class PlaylistBasePlayer(BasePlayer, ABC):
         self.load_item()
 
     @abstractmethod
-    def set_playlist(self, items: list[PlaylistItem]) -> None:
+    def set_playlist(self, items: list[PlaylistItem], stopping: bool = False) -> None:
         """Set the playlist"""
 
     @abstractmethod
@@ -110,7 +110,7 @@ class PlaylistBasePlayer(BasePlayer, ABC):
     def stop(self) -> None:
         """Stop the playback of the media and reset the media"""
         super().stop()
-        self.set_playlist(self.playlist)
+        self.set_playlist(self.playlist, stopping=True)
 
     @property
     def playlist_length(self) -> int:

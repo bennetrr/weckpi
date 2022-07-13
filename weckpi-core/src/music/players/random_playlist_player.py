@@ -8,14 +8,14 @@ from music.players.bases.playlist_base_player import PlaylistBasePlayer
 class RandomPlaylistPlayer(PlaylistBasePlayer):
     """A player for multiple media sources in random order"""
 
-    def set_playlist(self, items: list[PlaylistItem]) -> None:
+    def set_playlist(self, items: list[PlaylistItem], stopping: bool = False) -> None:
         """Set the playlist"""
         was_playing = self.is_playing
 
         shuffle(items)
         self.playlist = items
 
-        if was_playing:
+        if was_playing and not stopping:
             self.load_item()
             self.play()
 

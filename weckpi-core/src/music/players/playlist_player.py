@@ -6,13 +6,13 @@ from music.players.bases.playlist_base_player import PlaylistBasePlayer
 class PlaylistPlayer(PlaylistBasePlayer):
     """A player for multiple media sources"""
 
-    def set_playlist(self, items: list[PlaylistItem]) -> None:
+    def set_playlist(self, items: list[PlaylistItem], stopping: bool = False) -> None:
         """Set the playlist"""
         was_playing = self.is_playing
 
         self.playlist = items
 
-        if was_playing:
+        if was_playing and not stopping:
             self.play()
 
     def add_item(self, item: PlaylistItem) -> None:
