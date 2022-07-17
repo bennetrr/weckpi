@@ -1,7 +1,3 @@
-
-# Created by https://www.toptal.com/developers/gitignore/api/python,react
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,react
-
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -171,6 +167,10 @@ psd
 thumb
 sketch
 
-# End of https://www.toptal.com/developers/gitignore/api/python,react
+### NextJS ###
+# Next build dir
+.next/
 
+### WeckPi ###
+# Credential files
 **/*credential.yaml
