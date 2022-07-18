@@ -1,0 +1,41 @@
+.header {
+    height: 50px;
+    width: 100%;
+    display: flex;
+
+    background-color: #1f1f1f;
+    border-bottom: #00aa55 1px solid;
+}
+
+.logo {
+    height: auto;
+    width: auto;
+    margin: 10px 0 10px 10px;
+}
+
+.product_name, .settings_text {
+    margin: 10px 10px 10px 10px;
+    font-size: 30px;
+}
+
+.product_name {
+    font-weight: bold;
+}
+
+.seperator {
+    height: 80%;
+    width: 1px;
+    background-color: #00aa55;
+    margin: 5px 10px;
+}
+
+.page_switch_button {
+    height: 20px;
+    margin: 15px 10px 15px 10px;
+    position: absolute;
+    right: 10px;
+}
+
+.page_switch_button:hover {
+    color: #00aa55;
+}

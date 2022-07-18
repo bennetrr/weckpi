@@ -1,0 +1,8 @@
+.music_bar {
+    height: 100px;
+    width: 100%;
+    display: flex;
+
+    background-color: #1f1f1f;
+    border-top: #00aa55 1px solid;
+}

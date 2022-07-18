@@ -1,26 +1,23 @@
-import Head from "next/head";
 import React from "react";
 import styles from "../styles/Home.module.css";
-import nextPackage from "next/package.json";
-import TimeView from "../components/TimeView";
+
+import Head from "next/head";
+import InfoView from "../components/InfoScreen/InfoView";
+import Header from "../components/InfoScreen/Header";
+import MusicBar from "../components/InfoScreen/MusicBar";
 
 export default function Home({}) {
   return (
     <div className={styles.container}>
       <Head>
         <title>WeckPi</title>
-        <meta name="charset" content="UTF-8" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className={styles.header_bar}>
-        <img src="/weckpi_logo.png" alt="WeckPi Logo" className={styles.logo}/>
-        <h1>WeckPi</h1>
-      </div>
+      <Header />
+      <InfoView alarm_time={"8:30"} alarm_day={"Morgen"} />
+      <MusicBar />
 
-      <div className={styles.info_view}>
-        <TimeView />
-      </div>
     </div>
   );
 }
