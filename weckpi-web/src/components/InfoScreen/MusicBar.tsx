@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../styles/InfoScreen/MusicBar.module.css";
+import styles from "../../styles/InfoScreen/MusicBar.module.scss";
 
 export default function MusicBar() {
   return (

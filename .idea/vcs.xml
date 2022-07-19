@@ -8,5 +8,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/weckpi-web/src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/weckpi-web/src.old" vcs="Git" />
   </component>
 </project>

@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import styles from "../../styles/InfoScreen/TimeView.module.css";
+import styles from "../../styles/InfoScreen/TimeView.module.scss";
 
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-regular-svg-icons'
+import TimeViewProps from "../../types/TimeViewProps";
 
-export default function TimeView({ alarm_time, alarm_day }) {
+export default function TimeView({ alarm_time, alarm_day }: TimeViewProps) {
   const [date, setDate] = useState(new Date());
 
   useEffect(() => {

@@ -1,0 +1,10 @@
+@use '../variables';
+
+.music_bar {
+  height: 100px;
+  width: 100%;
+  display: flex;
+
+  background-color: variables.$background-color-dark;
+  border-top: variables.$seperator-line;
+}

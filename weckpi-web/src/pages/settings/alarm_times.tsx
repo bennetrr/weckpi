@@ -1,10 +1,10 @@
 import React from "react";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/Page.module.scss";
 
 import Head from "next/head";
 import Header from "../../components/Settings/Header";
 
-export default function Home({}) {
+export default function AlarmTimesSettings() {
   return (
     <div className={styles.container}>
       <Head>
@@ -14,7 +14,6 @@ export default function Home({}) {
 
       <Header />
       <div style={{ flex: 1 }} />
-
     </div>
   );
 }
