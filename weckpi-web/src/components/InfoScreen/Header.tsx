@@ -1,18 +1,24 @@
 import React from "react";
 import styles from "../../styles/Header.module.scss";
 
-import Link from "next/link";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
+import MenuEntry from "../MenuEntry";
+
+function MenuProductEntry() {
+    return (
+        <div className={styles.menuItemNonInteractive}>
+            <img src={"/weckpi_logo.png"} className={styles.menuProductEntryIcon} alt={"WeckPi Logo"}/>
+            <span className={styles.menuProductEntryText}><b>WeckPi</b></span>
+        </div>
+    )
+}
 
 export default function Header() {
-  return (
-      <div className={styles.header}>
-        <img src={"/weckpi_logo.png"} alt={"WeckPi Logo"} className={styles.logo}/>
-        <p className={styles.product_name}>WeckPi</p>
-        <Link href={"/settings"}>
-          <FontAwesomeIcon icon={faCog} className={styles.page_switch_button}/>
-        </Link>
-      </div>
-  );
+    return (
+        <div className={styles.header}>
+            <MenuProductEntry />
+            <div className={styles.leftRightSep} />
+            <MenuEntry link={"/settings"} icon={faCog} />
+        </div>
+    );
 }

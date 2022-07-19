@@ -1,45 +1,72 @@
 @use 'variables';
 
+// 1 Value: Top+Bottom+Right+Left
+// 2 Values: Top+Bottom Right+Left
+// 3 Values: Top Right+Left Bottom
+// 4 Values: Top Right Bottom Left
+
 .header {
-    height: 50px;
+    height: variables.$header-height;
     width: 100%;
+
     display: flex;
+    flex-direction: row;
 
     background-color: variables.$background-color-dark;
-    border-bottom: variables.$seperator-line;
-}
-
-.logo {
-    height: auto;
-    width: auto;
-    margin: 10px 0 10px 10px;
-}
-
-.product_name,
-.settings_text {
-    margin: 10px 10px 10px 10px;
-    font-size: 30px;
-}
-
-.product_name {
-    margin-left: 0;
-    font-weight: bold;
 }
 
 .seperator {
-    height: 80%;
+    height: variables.$header-height - 20px;
     width: 1px;
+    margin: 10px 15px;
+
     background-color: variables.$highlight-color;
-    margin: 5px 10px;
 }
 
-.page_switch_button {
-    height: 20px;
-    margin: 15px 10px 15px 10px;
-    position: absolute;
-    right: 10px;
+.menuItemNonInteractive {
+    height: variables.$header-height;
+    width: auto;
+    padding: 5px 15px;
 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    cursor: default;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.menuItem {
+    @extend .menuItemNonInteractive;
     &:hover {
         color: variables.$highlight-color;
+        border-top: variables.$seperator-line;
     }
+}
+
+.menuItemActive {
+    @extend .menuItemNonInteractive;
+    border-top: variables.$seperator-line;
+    border-top-width: 3px;
+}
+
+.menuItemText {
+    margin-left: 10px;
+}
+
+.menuProductEntryIcon {
+    height: 35px;
+    width: auto;
+}
+
+.menuProductEntryText {
+    font-size: 22px;
+    margin-left: 10px;
+}
+
+.leftRightSep {
+    margin-left: auto;
 }

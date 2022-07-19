@@ -8,12 +8,14 @@ export default function AlarmTimesSettings() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>WeckPi Settings</title>
+        <title>WeckPi Settings: Alarm Times</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Header />
-      <div style={{ flex: 1 }} />
+      <div className={styles.page_content}>
+
+      </div>
     </div>
   );
 }

@@ -2,11 +2,23 @@
 
 .container {
   height: 100vh;
+  background-color: variables.$background-color;
+  color: variables.$font-color;
+}
+
+.page_content {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
 
-  background-color: variables.$background-color;
-  color: variables.$font-color;
+.main_page_content {
+  @extend .page_content;
+  min-height: calc(100vh - variables.$header-height - variables.$music-bar-height);;
+}
+
+.settings_page_content {
+  @extend .page_content;
+  min-height: calc(100vh - variables.$header-height);
 }

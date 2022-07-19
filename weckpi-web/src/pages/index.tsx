@@ -15,7 +15,9 @@ export default function Home() {
       </Head>
 
       <Header />
-      <InfoView alarm_time={"8:30"} alarm_day={"Morgen"} />
+      <div className={styles.main_page_content}>
+        <InfoView alarm_time={"8:30"} alarm_day={"Morgen"} />
+      </div>
       <MusicBar />
 
     </div>

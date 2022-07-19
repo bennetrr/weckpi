@@ -16,9 +16,11 @@ export default function SettingsRedirect() {
   if (isRedirecting) {
     return (
         <div className={styles.container}>
-          <p className={styles.text}>
-            Redirecting...
-          </p>
+            <div className={styles.page_content}>
+                <p className={styles.text}>
+                    Redirecting...
+                </p>
+            </div>
         </div>
     );
   }
