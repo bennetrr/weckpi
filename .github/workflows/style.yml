@@ -31,7 +31,7 @@ jobs:
 
     - name: Analyse the code with pylint
       run: |
-        pylint weckpi-core/*.py
+        pylint "weckpi-core/*.py"
 
   eslint:
     runs-on: ubuntu-latest
