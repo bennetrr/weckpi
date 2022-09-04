@@ -1,0 +1,17 @@
+[FORMAT]
+# i, j, k for counting variables
+# f for file streams (with ... as f)
+# r for open requests (with ... as r)
+# e for events
+good-names=i,j,k,f,r,e
+
+max-line-length=120
+
+[MESSAGES CONTROL]
+disable=
+    E0401, # Import error
+    W0511, # TODO comments
+    R0913, # Too many arguments
+    W0237, # Different argument name than Interface
+    W1203, # Logging % formatting (doesn't work)
+    R0801  # Duplicated code
