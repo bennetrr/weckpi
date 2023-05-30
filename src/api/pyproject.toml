@@ -1,0 +1,21 @@
+[project]
+name = "weckpi.api"
+version = "0.0.1"
+authors = [{ name = "Bennet Ranft", email = "bennet@bennetr.me" }]
+description = "The API for developing plugins for the weckpi project"
+readme = "../../README.md"
+requires-python = ">=3.11"
+license = { file = "../../LICENSE" }
+classifiers = ["Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 1 - Planning"]
+keywords = ["weckpi", "alarm clock"]
+
+[project.urls]
+"Homepage" = "https://github.com/bennetrr/weckpi"
+"Bug Tracker" = "https://github.com/bennetrr/weckpi/issues"
+"Repository" = "https://github.com/bennetrr/weckpi"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
