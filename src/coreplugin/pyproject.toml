@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "weckpi-coreplugin"
+version = "0.0.1-alpha1"
+description = "The WeckPi core plugin, that has all the default content for the WeckPi project"
+authors = ["Bennet Ranft <bennet@bennetr.me>"]
+license = "MIT"
+readme = "../../README.md"
+packages = [{include = "src/weckpi"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+weckpi-api = {path = "../api", develop = true}
+tidalapi = "^0.7.1"
+
+[tool.poetry-monorepo-dependency-plugin]
+enable = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

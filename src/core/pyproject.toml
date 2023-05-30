@@ -1,14 +1,15 @@
 [tool.poetry]
-name = "weckpi-api"
+name = "weckpi-core"
 version = "0.0.1-alpha1"
-description = "The API for developing plugins for the WeckPi project"
+description = "The core software of the WeckPi project"
 authors = ["Bennet Ranft <bennet@bennetr.me>"]
 license = "MIT"
-readme = "../../README.md"
-packages = [{ include = "src/weckpi" }]
+readme = "README.md"
+packages = [{include = "weckpi"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+
 
 [build-system]
 requires = ["poetry-core"]
