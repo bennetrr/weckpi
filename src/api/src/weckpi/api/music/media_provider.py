@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import *
 from pathlib import Path
 
-from weckpi.api.music import MediaResource, Metadata
+import weckpi.api.music
 
 
 class MediaProvider(ABC):
@@ -32,25 +32,25 @@ class MediaProvider(ABC):
         """List the provider's available content in the given path."""
 
     @abstractmethod
-    def resolve_mrid(self, mrid: str) -> MediaResource:
+    def resolve_mrid(self, mrid: str) -> weckpi.api.music.MediaResource:
         """Get all the information of the given media resource like URI and metadata."""
 
     @abstractmethod
-    def get_metadata(self, mrid: str) -> Metadata:
+    def get_metadata(self, mrid: str) -> weckpi.api.music.Metadata:
         """Get the metadata of the given media resource."""
 
     # Flags to tell the core application what the provider is capable of
-    @abstractmethod
     @property
+    @abstractmethod
     def needs_login(self) -> bool:
         """Whether the user needs to sign in to the provider."""
 
-    @abstractmethod
     @property
+    @abstractmethod
     def can_explore(self) -> bool:
         """Whether the provider supports exploring."""
 
-    @abstractmethod
     @property
+    @abstractmethod
     def can_search(self) -> bool:
         """Whether the provider supports searching."""

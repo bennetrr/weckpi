@@ -4,8 +4,15 @@ version = "0.0.1-alpha1"
 description = "The WeckPi core plugin, that has all the default content for the WeckPi project"
 authors = ["Bennet Ranft <bennet@bennetr.me>"]
 license = "MIT"
+
 readme = "../../README.md"
-packages = [{include = "src/weckpi"}]
+homepage = "https://github.com/bennetrr/weckpi"
+repository = "https://github.com/bennetrr/weckpi"
+documentation = "https://github.com/bennetrr/weckpi"
+
+[[tool.poetry.packages]]
+include = "weckpi"
+from = "src"
 
 [tool.poetry.dependencies]
 python = "^3.11"
