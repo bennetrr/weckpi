@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import weckpi.api.music
+import weckpi.api.music as wpm
 
 
 @dataclass(init=True, )
 class MediaResource:
     """"""
-    provider: weckpi.api.music.MediaProvider
+    provider: wpm.MediaProvider
     mrid: str
     uri: str
-    metadata: weckpi.api.music.Metadata
+    metadata: wpm.Metadata

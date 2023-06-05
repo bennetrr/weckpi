@@ -3,15 +3,17 @@ from __future__ import annotations
 from abc import *
 from pathlib import Path
 
-import weckpi.api.music
+import weckpi.api.music as wpm
 
 
 class MediaProvider(ABC):
     """
-    A music provider is the interface for accessing music resources that are saved on the disk,
-    in the local network or somewhere in the internet.
+    Interface for all media providers.
 
-    A music provider handles:
+    A media provider class contains the code for accessing media resources that are saved on the disk,
+    in the local network or somewhere on the internet.
+
+    A media provider handles:
 
     - Authenticating to the provider
     - Searching / listing the available content
@@ -32,11 +34,11 @@ class MediaProvider(ABC):
         """List the provider's available content in the given path."""
 
     @abstractmethod
-    def resolve_mrid(self, mrid: str) -> weckpi.api.music.MediaResource:
+    def resolve_mrid(self, mrid: str) -> wpm.MediaResource:
         """Get all the information of the given media resource like URI and metadata."""
 
     @abstractmethod
-    def get_metadata(self, mrid: str) -> weckpi.api.music.Metadata:
+    def get_metadata(self, mrid: str) -> wpm.Metadata:
         """Get the metadata of the given media resource."""
 
     # Flags to tell the core application what the provider is capable of
