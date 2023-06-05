@@ -60,20 +60,20 @@ class MediaPlayer(ABC):
 
     @property
     @abstractmethod
-    def volume(self) -> int:
+    def volume(self) -> float:
         """
         Get the volume.
 
-        :return: The volume in percent (value between 0 and 100).
+        :return: The volume in percent (value between 0.0 and 100.0).
         """
 
     @volume.setter
     @abstractmethod
-    def volume(self, value: int):
+    def volume(self, value: float):
         """
         Set the volume.
 
-        :param value: The volume in percent (value between 0 and 100).
+        :param value: The volume in percent (value between 0.0 and 100.0).
         """
 
     @property
