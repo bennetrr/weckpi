@@ -8,7 +8,7 @@ import weckpi.api.music as wpm
 MRID = NewType('MRID', str)
 
 
-@dataclass(init=True)
+@dataclass(kw_only=True, frozen=True)
 class MediaResource:
     """"""
     provider: wpm.MediaProvider

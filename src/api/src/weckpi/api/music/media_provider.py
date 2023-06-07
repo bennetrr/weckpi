@@ -19,6 +19,13 @@ class MediaProvider(ABC):
     - Searching / listing the available content
     - Getting a playable URI
     - Getting metadata like title, artist, album image, etc.
+
+    MRID: provider_id:provider_instance_id:provider_specific_id
+
+    Examples:
+
+    - tidal:my-user:song-from-artist
+    - local-fs:local:/mnt/daten/Music/Path/To/Song.mp3
     """
 
     @abstractmethod

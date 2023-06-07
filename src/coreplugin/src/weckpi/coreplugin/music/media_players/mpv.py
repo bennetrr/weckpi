@@ -8,6 +8,7 @@ from typing import Sequence
 import mpv
 
 from weckpi.api.music import MediaPlayer, MediaResource, Metadata, MRID
+from weckpi.api.plugin_manager import PluginManager
 
 logger = logging.getLogger(__name__)
 
@@ -54,9 +55,15 @@ class MpvMediaPlayer(MediaPlayer):
     def _play_current_item(self):
         """Get the media resource information for the MRID"""
         mrid = self._queue[self._current_queue_index]
-        # TODO MRID resolution
-        media_resource = MediaResource(None, mrid, None, None, None)
-        self._player.play(media_resource.uri)
+        provider_id, provider_instance_id, _ = mrid.split(':', 2)
+
+        self._current_item = PluginManager \
+            .get_instance() \
+            .get_media_provider(provider_id) \
+            .get_instance(provider_instance_id) \
+            .resolve_mrid(mrid)
+
+        self._player.play(self._current_item.uri)
 
     def play(self):
         """Start the playback."""
