@@ -30,3 +30,48 @@ jobs:
 
     - working-directory: src/api
       run: poetry run pylint **/*.py --rcfile ../../pylintrc
+    
+  pylint-coreplugin:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
+        
+    - uses: Gr1N/setup-poetry@v8
+
+    - working-directory: src/coreplugin
+      run: poetry install --with dev
+
+    - uses: pr-annotators/pylint-pr-annotator@main
+
+    - working-directory: src/coreplugin
+      run: poetry run pylint **/*.py --rcfile ../../pylintrc
+      
+  pylint-core:
+    runs-on: ubuntu-latest
+    steps:
+    - run: exit 0
+    #- uses: actions/checkout@v3
+    #
+    #- uses: actions/setup-python@v3
+    #  with:
+    #    python-version: "3.11"
+    #    
+    #- uses: Gr1N/setup-poetry@v8
+    #
+    #- working-directory: src/coreplugin
+    #  run: poetry install --with dev
+    #
+    #- uses: pr-annotators/pylint-pr-annotator@main
+    #
+    #- working-directory: src/coreplugin
+    #  run: poetry run pylint **/*.py --rcfile ../../pylintrc
+    
+  eslint-web:
+      runs-on: ubuntu-latest
+      steps:
+      - run: exit 0
+      #...
