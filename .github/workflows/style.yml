@@ -29,4 +29,4 @@ jobs:
     - uses: pr-annotators/pylint-pr-annotator@main
 
     - working-directory: src/api
-      run: pylint **/*.py --rcfile ../../pylintrc
+      run: poetry run pylint **/*.py --rcfile ../../pylintrc
