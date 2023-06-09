@@ -19,6 +19,7 @@ python = "^3.11"
 weckpi-api = {path = "../api", develop = true}
 tidalapi = "^0.7.1"
 mpv = "^1.0.3"
+mutagen = "^1.46.0"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.17.4"

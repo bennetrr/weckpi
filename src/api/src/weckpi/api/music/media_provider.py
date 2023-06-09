@@ -25,7 +25,7 @@ class MediaProvider(ABC):
     Examples:
 
     - tidal:my-user:song-from-artist
-    - local-fs:local:/mnt/daten/Music/Path/To/Song.mp3
+    - local-fs:local-fs:/mnt/daten/Music/Path/To/Song.mp3
     """
 
     @abstractmethod
@@ -41,25 +41,9 @@ class MediaProvider(ABC):
         """List the provider's available content in the given path."""
 
     @abstractmethod
-    def resolve_mrid(self, mrid: str) -> wpm.MediaResource:
+    def resolve_mrid(self, mrid: wpm.MRID) -> wpm.MediaResource:
         """Get all the information of the given media resource like URI and metadata."""
 
     @abstractmethod
-    def get_metadata(self, mrid: str) -> wpm.Metadata:
+    def get_metadata(self, mrid: wpm.MRID) -> wpm.Metadata:
         """Get the metadata of the given media resource."""
-
-    # Flags to tell the core application what the provider is capable of
-    @property
-    @abstractmethod
-    def needs_login(self) -> bool:
-        """Whether the user needs to sign in to the provider."""
-
-    @property
-    @abstractmethod
-    def can_explore(self) -> bool:
-        """Whether the provider supports exploring."""
-
-    @property
-    @abstractmethod
-    def can_search(self) -> bool:
-        """Whether the provider supports searching."""

@@ -30,6 +30,7 @@ class MpvMediaPlayer(MediaPlayer):
 
         self._player = mpv.MPV()
         self._queue = []
+        self._original_queue = []
         self._current_queue_index = 0
         self._current_item = None
         self._shuffle = False
