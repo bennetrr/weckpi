@@ -173,6 +173,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/fontawesome-common-types@npm:6.4.0":
+  version: 6.4.0
+  resolution: "@fortawesome/fontawesome-common-types@npm:6.4.0"
+  checksum: a9b79136caa615352bd921cfe2710516321b402cd76c3f0ae68e579a7e3d7645c5a5c0ecd7516c0b207adeeffd1d2174978638d8c0d3c8c937d66fca4f2ff556
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-brands-svg-icons@npm:^6.4.0":
+  version: 6.4.0
+  resolution: "@fortawesome/free-brands-svg-icons@npm:6.4.0"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.4.0
+  checksum: 110b22ec366793bc2daa10d0016dfcdf0a0341ced0d8d5c4f68c86e7ffb5e58d3a0b32062e0daaf38af010f85147a9d33e7fd7a8fde79309af7a05254eadbf31
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-solid-svg-icons@npm:^6.4.0":
+  version: 6.4.0
+  resolution: "@fortawesome/free-solid-svg-icons@npm:6.4.0"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.4.0
+  checksum: efdd1688620be3d52aacaeac36c955571962e174ae981fc697b6e92fb0996b00166d02e7729a59ea93713a514e2c8d564ab1aa79c9653b4cfed0263e4874d070
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -2292,6 +2317,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"svelte-fa@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "svelte-fa@npm:3.0.4"
+  checksum: 275f76d467c6fa0596a7c11f664503f0e6aeba22bcaff612466aa1a28c37290d2846bc79b7beb1d8e5053788380d2275ed2c7f3ae2fb6c5e9d6ac97f53a6527d
+  languageName: node
+  linkType: hard
+
 "svelte-hmr@npm:^0.15.1":
   version: 0.15.2
   resolution: "svelte-hmr@npm:0.15.2"
@@ -2579,6 +2611,8 @@ __metadata:
   resolution: "web@workspace:."
   dependencies:
     "@fontsource/fira-mono": ^4.5.10
+    "@fortawesome/free-brands-svg-icons": ^6.4.0
+    "@fortawesome/free-solid-svg-icons": ^6.4.0
     "@neoconfetti/svelte": ^1.0.0
     "@skeletonlabs/skeleton": ^1.7.1
     "@sveltejs/adapter-auto": ^2.0.0
@@ -2589,6 +2623,7 @@ __metadata:
     postcss-load-config: ^4.0.1
     svelte: ^3.54.0
     svelte-check: ^3.0.1
+    svelte-fa: ^3.0.4
     svelte-preprocess: ^5.0.3
     tailwindcss: ^3.3.1
     tslib: ^2.4.1
