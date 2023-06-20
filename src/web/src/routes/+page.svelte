@@ -1,9 +1,9 @@
 <script lang="ts">
-    import {musicMetadata, musicPosition} from "$lib/stores/ContentStore";
-
     //@ts-ignore
     import Fa from "svelte-fa";
     import {faCog} from "@fortawesome/free-solid-svg-icons";
+
+    import {musicMetadata, musicPlaying, musicPosition, musicRepeat, musicShuffle, musicVolume} from "$lib/stores/ContentStore";
 
     import {AppBar, AppShell} from "@skeletonlabs/skeleton";
 
@@ -16,9 +16,13 @@
         album: "Futureperfect",
         image_uri: "https://resources.tidal.com/images/2a85ef7a/1aef/43cc/8d2f/e9911c757c1a/1280x1280.jpg",
         duration: 7 + 24 / 60
-    }
+    };
 
-    $musicPosition = 0.47
+    $musicPosition = 1.20;
+    $musicPlaying = true;
+    $musicShuffle = true;
+    $musicRepeat = false;
+    $musicVolume = 50;
 
     let date = new Date();
     $: hour = date.getHours().toString().padStart(2, "0");
@@ -38,7 +42,7 @@
     <title>WeckPi</title>
 </svelte:head>
 
-<AppShell>
+<AppShell class="select-none">
     <svelte:fragment slot="header">
         <AppBar slotTrail="place-content-end">
             <span>WeckPi</span>
