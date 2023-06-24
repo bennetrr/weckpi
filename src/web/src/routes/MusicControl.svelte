@@ -3,10 +3,14 @@
     import Fa from "svelte-fa";
     import {faBackwardStep, faForwardStep, faPause, faPlay, faRepeat, faShuffle, faStop, faVolumeHigh, faVolumeLow, faVolumeMute} from "@fortawesome/free-solid-svg-icons";
 
-    import {musicMetadata, musicPlaying, musicPosition, musicRepeat, musicShuffle, musicVolume} from "$lib/stores/ContentStore";
+    import {musicMetadata, musicPlaying, musicPosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
     import {minutesToTime} from "$lib/helpers/DateTimeHelpers";
 
     import {popup, type PopupSettings, ProgressBar} from "@skeletonlabs/skeleton";
+    import {getContext} from "svelte";
+    import type WeckPiCoreConnection from "$lib/BackendConnection/WeckPiCoreConnection";
+
+    const weckPiCoreConnection = getContext<WeckPiCoreConnection>("weckPiCoreConnection");
 
     function getVolumeIcon(volume: number) {
         if (volume === 0) return faVolumeMute;
@@ -48,23 +52,23 @@
 
     <div class="flex flex-col gap-4">
         <div class="flex place-content-center gap-4">
-            <button class="btn-icon" class:variant-ghost={!$musicShuffle} class:variant-ghost-primary={$musicShuffle}>
+            <button class="btn-icon" class:variant-ghost={!$musicShuffle} class:variant-ghost-primary={$musicShuffle} on:click={() => $musicShuffle = !$musicShuffle}>
                 <Fa icon={faShuffle}/>
             </button>
 
-            <button class="btn-icon variant-ghost">
+            <button class="btn-icon variant-ghost" on:click={() => weckPiCoreConnection.send({propertyName: "music.previous_song", value: true})}>
                 <Fa icon={faBackwardStep}/>
             </button>
 
-            <button class="btn-icon variant-ghost">
+            <button class="btn-icon variant-ghost" on:click={() => $musicPlaying = !$musicPlaying}>
                 <Fa icon={$musicPlaying ? faPause : faPlay}/>
             </button>
 
-            <button class="btn-icon variant-ghost">
+            <button class="btn-icon variant-ghost" on:click={() => weckPiCoreConnection.send({propertyName: "music.next_song", value: true})}>
                 <Fa icon={faForwardStep}/>
             </button>
 
-            <button class="btn-icon" class:variant-ghost={!$musicRepeat} class:variant-ghost-primary={$musicRepeat}>
+            <button class="btn-icon" class:variant-ghost={!$musicRepeat} class:variant-ghost-primary={$musicRepeat} on:click={() => $musicRepeat = !$musicRepeat}>
                 <Fa icon={faRepeat}/>
             </button>
         </div>
@@ -77,7 +81,7 @@
     </div>
 
     <div class="flex place-items-center place-content-end gap-4 mr-10">
-        <button class="btn-icon variant-ghost">
+        <button class="btn-icon variant-ghost" on:click={() => weckPiCoreConnection.send({propertyName: "music.stop", value: true})}>
             <Fa icon={faStop}/>
         </button>
 
