@@ -41,9 +41,9 @@ class MediaProvider(ABC):
         """List the provider's available content in the given path."""
 
     @abstractmethod
-    def resolve_mrid(self, mrid: wpm.MRID) -> wpm.MediaResource:
+    def resolve_mrid(self, mrid: str) -> wpm.MediaResource:
         """Get all the information of the given media resource like URI and metadata."""
 
     @abstractmethod
-    def get_metadata(self, mrid: wpm.MRID) -> wpm.Metadata:
+    def get_metadata(self, mrid: str) -> wpm.Metadata:
         """Get the metadata of the given media resource."""

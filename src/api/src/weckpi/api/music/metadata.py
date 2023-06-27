@@ -17,8 +17,7 @@ class Metadata:
     title: str
     artist: str
     album: str
-    image: str
-    played_from: str
+    image: str | None
 
     def __repr__(self):
-        return f'{self.artist} - {self.title} from {self.album}, played from {self.played_from}'
+        return f'{self.artist} - {self.title} from {self.album}'

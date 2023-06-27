@@ -7,7 +7,7 @@ from concurrent.futures import Future, ThreadPoolExecutor
 
 import tidalapi as tidal
 
-from weckpi.api.music import MediaProvider, MediaResource, Metadata, MRID
+from weckpi.api.music import MediaProvider, MediaResource, Metadata
 from weckpi.api.authentication import LinkAuthenticationResponse, CodeAuthenticationResponse
 
 
@@ -72,7 +72,7 @@ class Tidal(MediaProvider):
             }, credential_stream, indent=2)
         return
 
-    def search(self, search_term: str) -> list[MRID]:
+    def search(self, search_term: str) -> list[str]:
         res = self._session.search(search_term)
         return [
             *[f'tidal:{self._session_id}:album:{x.id}' for x in res['albums']],
@@ -82,12 +82,12 @@ class Tidal(MediaProvider):
             *[f'tidal:{self._session_id}:playlist:{x.id}' for x in res['playlists']]
         ]
 
-    def explore(self, path: str = ...) -> list[MRID]:
+    def explore(self, path: str = ...) -> list[str]:
         if path is None:
             path = f'tidal:{self._session_id}:my_playlists'
         ...
 
-    def resolve_mrid(self, mrid: MRID) -> MediaResource:
+    def resolve_mrid(self, mrid: str) -> MediaResource:
         _, _, tidal_type, tidal_id = mrid.split(':', 3)
 
         if tidal_type == 'track':
@@ -110,5 +110,5 @@ class Tidal(MediaProvider):
             raise NotImplementedError
         raise NotImplementedError
 
-    def get_metadata(self, mrid: MRID) -> Metadata:
+    def get_metadata(self, mrid: str) -> Metadata:
         pass

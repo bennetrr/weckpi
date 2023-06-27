@@ -11,13 +11,7 @@
     import MusicControl from "./MusicControl.svelte";
     import Clock from "./Clock.svelte";
 
-    onMount(() => {
-        const weckPiCoreConnection = new WebSocket("ws://localhost:8080");
-        setContext("weckPiCoreConnection", weckPiCoreConnection);
-
-
-
-        $musicMetadata = {
+    $musicMetadata = {
             title: "Beloved",
             artist: "VNV Nation",
             album: "Futureperfect",
@@ -30,6 +24,14 @@
         $musicShuffle = true;
         $musicRepeat = false;
         $musicVolume = 50;
+
+    onMount(() => {
+        const weckPiCoreConnection = new WebSocket("ws://localhost:8080");
+        setContext("weckPiCoreConnection", weckPiCoreConnection);
+
+
+
+
     });
 </script>
 

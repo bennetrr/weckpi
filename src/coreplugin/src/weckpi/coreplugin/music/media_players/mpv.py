@@ -7,7 +7,7 @@ from typing import Sequence
 
 import mpv
 
-from weckpi.api.music import MediaPlayer, MediaResource, Metadata, MRID
+from weckpi.api.music import MediaPlayer, MediaResource, Metadata
 from weckpi.api.plugin_manager import PluginManager
 
 logger = logging.getLogger(__name__)
@@ -18,10 +18,15 @@ class MpvMediaPlayer(MediaPlayer):
     Playback device using the MPV media player.
     """
     _player: mpv.MPV
-    _queue: list[MRID]
-    _original_queue: list[MRID]
+    _block_on_idle_status_change: bool
+
+    _queue: list[str]
+    _queue_metadata: list[Metadata]
+    _original_queue: list[int]
+
     _current_queue_index: int
     _current_item: MediaResource | None
+
     _shuffle: bool
     _repeat: bool
 
@@ -29,45 +34,67 @@ class MpvMediaPlayer(MediaPlayer):
         logger.debug('MPV version: %s', mpv.MPV_VERSION)
 
         self._player = mpv.MPV()
+        self._block_on_idle_status_change = True
+
         self._queue = []
+        self._queue_metadata = []
+        # This list contains the current index (index) and the original index (value) of the queue items.
         self._original_queue = []
+
         self._current_queue_index = 0
         self._current_item = None
+
         self._shuffle = False
         self._repeat = False
 
         # Event handlers
-        # noinspection PyUnusedLocal
-        # pylint: disable=unused-argument
-        def on_idle_status_change(prop: str, core_idle: bool):
-            if not core_idle:
+        def on_idle_status_change(_, is_idle: bool):
+            """Event handler for the core_idle property."""
+            print(f'{is_idle=}{", blocked" if self._block_on_idle_status_change or not is_idle else ""}')
+
+            if not is_idle:
+                return
+
+            if self._block_on_idle_status_change:
+                self._block_on_idle_status_change = False
                 return
 
             if self._current_queue_index + 1 >= len(self._queue):
                 if not self._repeat:
                     return
                 self._current_queue_index = 0
+            else:
+                self._current_queue_index += 1
 
-            self._current_queue_index += 1
             self._play_current_item()
+            print('Changed to next item in queue')
 
-        self._player.observe_property('core_idle', on_idle_status_change)
+        self._player.observe_property('core-idle', on_idle_status_change)
+
+    @staticmethod
+    def _get_plugin_instance(mrid: str):
+        """Get the plugin instance for the given MRID."""
+        provider_id, provider_instance_id, _ = mrid.split(':', 2)
+
+        return PluginManager \
+            .get_instance() \
+            .get_media_provider(provider_id) \
+            .get_instance(provider_instance_id)
 
     def _play_current_item(self):
-        """Get the media resource information for the MRID"""
+        """Get the media resource information for the MRID."""
         mrid = self._queue[self._current_queue_index]
         provider_id, provider_instance_id, _ = mrid.split(':', 2)
 
-        self._current_item = PluginManager \
-            .get_instance() \
-            .get_media_provider(provider_id) \
-            .get_instance(provider_instance_id) \
-            .resolve_mrid(mrid)
+        self._current_item = self._get_plugin_instance(mrid).resolve_mrid(mrid)
 
         self._player.play(self._current_item.uri)
 
     def play(self):
         """Start the playback."""
+        if not self._player.core_idle:
+            return
+
         if self._player.pause:
             self._player.pause = False
         else:
@@ -75,40 +102,59 @@ class MpvMediaPlayer(MediaPlayer):
 
     def pause(self):
         """Pause the playback."""
-        if not self._player.core_idle:
-            self._player.pause = True
+        if self._player.core_idle:
+            return
+
+        self._block_on_idle_status_change = True
+        self._player.pause = True
 
     def stop(self):
         """Stop the playback and reset the queue."""
         if not self._player.core_idle:
             self._player.stop()
             self._current_queue_index = 0
-            self._queue = self._original_queue.copy()
+
+            if self._shuffle:
+                random.shuffle(self._queue)
 
     def next(self):
         """Jump to the next element in the queue."""
         if self._current_queue_index + 1 >= len(self._queue):
-            raise IndexError("There are no items left in the queue!")
+            if not self._repeat:
+                raise IndexError("There are no items left in the queue!")
 
-        self._current_queue_index += 1
+            self._current_queue_index = 0
+        else:
+            self._current_queue_index += 1
+
+        self._block_on_idle_status_change = True
         self._play_current_item()
 
     def previous(self):
         """Jump to the previous element in the queue."""
         if self._current_queue_index <= 0:
-            raise IndexError("You are already at the beginning of the queue!")
+            if not self._repeat:
+                raise IndexError("You are already at the beginning of the queue!")
 
-        self._current_queue_index -= 1
+            self._current_queue_index = len(self._queue) - 1
+        else:
+            self._current_queue_index -= 1
+
+        self._block_on_idle_status_change = True
         self._play_current_item()
 
-    def add_media(self, media: MRID | Sequence[MRID]):
+    def _add_item(self, mrid: str):
+        """Add one item at the end of the queue."""
+        self._queue.append(mrid)
+        self._queue_metadata.append(self._get_plugin_instance(mrid).get_metadata(mrid))
+        self._original_queue.append(len(self._original_queue))
+
+    def add_media(self, mrid: str | Sequence[str]):
         """Add one or multiple items at the end of the queue."""
-        if isinstance(media, Sequence):
-            self._queue.extend(media)
-            self._original_queue.extend(media)
+        if isinstance(mrid, str):
+            self._add_item(mrid)
         else:
-            self._queue.append(media)
-            self._original_queue.append(media)
+            [self._add_item(item) for item in mrid]
 
     def remove_media(self, index: int):
         """Remove the item with the given index from the queue."""
@@ -116,10 +162,11 @@ class MpvMediaPlayer(MediaPlayer):
             raise IndexError('The index has to be between 0 and the length of the queue!')
 
         if self._current_queue_index == index:
+            self._block_on_idle_status_change = True
             self.next()
 
         self._queue.pop(index)
-        self._original_queue.pop(index)
+        self._original_queue.remove(index)
 
     @property
     def queue_position(self) -> int:
@@ -129,20 +176,24 @@ class MpvMediaPlayer(MediaPlayer):
     @queue_position.setter
     def queue_position(self, value: int):
         """Set the index of the current queue item."""
-        if 0 >= value >= len(self._queue):
+        if 0 > value >= len(self._queue):
             raise IndexError('The index has to be between 0 and the length of the queue!')
 
         self._current_queue_index = value
+
+        self._block_on_idle_status_change = True
         self._play_current_item()
 
     @property
-    def queue(self) -> list[MRID]:
+    def queue(self) -> list[Metadata]:
         """Get the queue."""
-        return self._queue.copy()
+        return self._queue_metadata.copy()
 
     def clear_queue(self):
         """Remove all items from the queue."""
+        self.stop()
         self._queue.clear()
+        self._queue_metadata.clear()
         self._original_queue.clear()
 
     @property
@@ -182,6 +233,10 @@ class MpvMediaPlayer(MediaPlayer):
 
         :param value: The position in minutes.
         """
+        if 0.0 > value > self._player.duration:
+            raise ValueError('The position must be between 0.0 and the duration of the current queue item!')
+
+        self._block_on_idle_status_change = True
         self._player.time_pos = value * 60
 
     @property
@@ -193,15 +248,27 @@ class MpvMediaPlayer(MediaPlayer):
     def shuffle(self, value: bool):
         """Set whether the queue is shuffled."""
         if value:
-            # Shuffle the queue and put the current item at the first index
-            current_mrid = self._queue.pop(self._current_queue_index)
-            random.shuffle(self._queue)
-            self._queue.insert(0, current_mrid)
+            self._original_queue.remove(self._current_queue_index)
+            random.shuffle(self._original_queue)
+            self._original_queue.insert(0, self._current_queue_index)
+
+            self._queue = [self._queue[i] for i in self._original_queue]
+            self._queue_metadata = [self._queue_metadata[i] for i in self._original_queue]
+
             self._current_queue_index = 0
         else:
-            # Reset the playlist order and set the index to the right item
-            self._queue = self._original_queue.copy()
-            self._current_queue_index = self._queue.index(self._current_item.mrid)
+            new_queue: list[str] = [None] * len(self._queue)
+            new_queue_metadata: list[Metadata] = [None] * len(self._queue_metadata)
+
+            for current_index, original_index in enumerate(self._original_queue):
+                new_queue[original_index] = self._queue[current_index]
+                new_queue_metadata[original_index] = self._queue_metadata[current_index]
+
+            self._queue = new_queue
+            self._queue_metadata = new_queue_metadata
+            self._original_queue.sort()
+
+            self._current_queue_index = self._original_queue[self._current_queue_index]
 
         self._shuffle = value
 
@@ -236,3 +303,6 @@ class MpvMediaPlayer(MediaPlayer):
         :return: The duration in minutes.
         """
         return self._player.duration / 60
+
+    def __repr__(self):
+        return f'Playing element {self._current_queue_index + 1} of {len(self._queue)}: {self.metadata}'

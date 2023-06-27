@@ -5,7 +5,7 @@ from pathlib import Path
 
 import mutagen
 
-from weckpi.api.music import MediaProvider, MRID, Metadata, MediaResource
+from weckpi.api.music import MediaProvider, MediaResource, Metadata
 
 
 class LocalFS(MediaProvider):
@@ -14,6 +14,7 @@ class LocalFS(MediaProvider):
 
     The MRID format is local-fs:local-fs:/path/to/media/file.mp3
     """
+
     def login(self, credential_file: Path):
         """
         No login needed for this media provider.
@@ -34,7 +35,8 @@ class LocalFS(MediaProvider):
         """List all media files and directories containing media files in the given path."""
         return NotImplemented
 
-    def resolve_mrid(self, mrid: MRID) -> MediaResource:
+    def _check_mrid(self, mrid: str):
+        """Check if the given MRID is valid for this plugin instance."""
         provider_id, provider_instance_id, path_str = mrid.split(':', 2)
 
         if provider_id != 'local-fs' or provider_instance_id != 'local-fs':
@@ -47,20 +49,28 @@ class LocalFS(MediaProvider):
             raise FileNotFoundError(f'Invalid MRID {mrid}:'
                                     f'The file {path} does not exist on the local filesystem!')
 
-        media_file = mutagen.File(path, easy=True)
+    def resolve_mrid(self, mrid: str) -> MediaResource:
+        path = Path(mrid.split(':', 2)[2])
+
         return MediaResource(
             provider=self,
             mrid=mrid,
             uri=str(path),
-            metadata=Metadata(
-                title=media_file['Title'][0].value,
-                artist=media_file['Author'][0].value,
-                album=media_file['WM/AlbumTitle'][0].value,
-                image='',
-                played_from='This WeckPi'
-            ),
+            metadata=self.get_metadata(mrid),
             continuous=False
         )
 
-    def get_metadata(self, mrid: MRID) -> Metadata:
-        return Metadata('', '', '', '', '')
+    def get_metadata(self, mrid: str) -> Metadata:
+        self._check_mrid(mrid)
+
+        path = Path(mrid.split(':', 2)[2])
+        media_file = mutagen.File(path, easy=True)
+
+        image_path = path.parent / 'Folder.jpg'
+
+        return Metadata(
+            title=media_file['Title'][0].value,
+            artist=media_file['Author'][0].value,
+            album=media_file['WM/AlbumTitle'][0].value,
+            image=image_path if image_path.is_file() else None
+        )
