@@ -1,25 +1,36 @@
-export interface MessageData {
-    propertyName: string;
-    value: any;
-}
+import {io, type Socket} from "socket.io-client";
+import {writable} from "svelte/store";
 
-export default class WeckPiCoreConnection {
-    private webSocket: WebSocket;
+export const weckpiCore = writable<WeckPiCoreConnection>();
 
-    public constructor(url: string) {
-        this.webSocket = new WebSocket(url);
+export class WeckPiCoreConnection {
+    private sio: Socket;
+    private disabled: boolean;
+
+    public constructor() {
+        this.sio = io("ws://localhost:8000/");
+        this.disabled = true;
     }
 
-    public send(data: MessageData) {
-        this.webSocket.send(JSON.stringify(data));
+    public enable() {
+        this.disabled = false;
     }
 
-    public close() {
-        this.webSocket.close(1001);
+    public getInitialData(fn: (initialData: any) => void) {
+        this.sio.emit("initial-data-request", fn)
     }
 
-    public setOnMessage(func: (event: MessageEvent) => void, overwrite: boolean = false) {
-        if (this.webSocket.onmessage !== undefined && !overwrite) return;
-        this.webSocket.onmessage = func;
+    public propertyChange(prop: string, value: any) {
+        if (this.disabled) return;
+        this.sio.emit("property-change", {prop, value});
+    }
+
+    public onPropertyChange(fn: (prop: string, value: any) => void) {
+        this.sio.on("property-change", (args) => fn(args.prop, args.value));
+    }
+
+    public action(name: string) {
+        if (this.disabled) return;
+        this.sio.emit("action", {name});
     }
 }

@@ -2,15 +2,11 @@
     //@ts-ignore
     import Fa from "svelte-fa";
     import {faBackwardStep, faForwardStep, faPause, faPlay, faRepeat, faShuffle, faStop, faVolumeHigh, faVolumeLow, faVolumeMute} from "@fortawesome/free-solid-svg-icons";
+    import {popup, type PopupSettings, ProgressBar} from "@skeletonlabs/skeleton";
 
+    import {weckpiCore} from "$lib/BackendConnection/WeckPiCoreConnection";
     import {musicMetadata, musicPlaying, musicPosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
     import {minutesToTime} from "$lib/helpers/DateTimeHelpers";
-
-    import {popup, type PopupSettings, ProgressBar} from "@skeletonlabs/skeleton";
-    import {getContext} from "svelte";
-    import type WeckPiCoreConnection from "$lib/BackendConnection/WeckPiCoreConnection";
-
-    const weckPiCoreConnection = getContext<WeckPiCoreConnection>("weckPiCoreConnection");
 
     function getVolumeIcon(volume: number) {
         if (volume === 0) return faVolumeMute;
@@ -42,11 +38,11 @@
 
 <div class="bg-surface-100-800-token p-4 grid gap-6" style="grid-template-columns: 20% 1fr 20%">
     <div class="flex flex-row gap-4 overflow-hidden whitespace-nowrap">
-        <img alt="Image" class="h-[90px] rounded-lg" src={$musicMetadata.image_uri}>
+        <img alt="Image" class="h-[90px] rounded-lg" src={$musicMetadata && $musicMetadata.image_uri}>
         <div>
-            <span class="font-bold" title={$musicMetadata.title}>{$musicMetadata.title}</span><br/>
-            <span title={$musicMetadata.artist}>{$musicMetadata.artist}</span><br/>
-            <span title={$musicMetadata.album}>{$musicMetadata.album}</span>
+            <span class="font-bold" title={$musicMetadata && $musicMetadata.title}>{$musicMetadata && $musicMetadata.title}</span><br/>
+            <span title={$musicMetadata && $musicMetadata.artist}>{$musicMetadata && $musicMetadata.artist}</span><br/>
+            <span title={$musicMetadata && $musicMetadata.album}>{$musicMetadata && $musicMetadata.album}</span>
         </div>
     </div>
 
@@ -56,7 +52,7 @@
                 <Fa icon={faShuffle}/>
             </button>
 
-            <button class="btn-icon variant-ghost" on:click={() => weckPiCoreConnection.send({propertyName: "music.previous_song", value: true})}>
+            <button class="btn-icon variant-ghost" on:click={() => $weckpiCore.action("music.previous_song")}>
                 <Fa icon={faBackwardStep}/>
             </button>
 
@@ -64,7 +60,7 @@
                 <Fa icon={$musicPlaying ? faPause : faPlay}/>
             </button>
 
-            <button class="btn-icon variant-ghost" on:click={() => weckPiCoreConnection.send({propertyName: "music.next_song", value: true})}>
+            <button class="btn-icon variant-ghost" on:click={() => $weckpiCore.action("music.next_song")}>
                 <Fa icon={faForwardStep}/>
             </button>
 
@@ -75,13 +71,13 @@
 
         <div class="flex place-items-center gap-6">
             <span>{minutesToTime($musicPosition)}</span>
-            <ProgressBar max={1} value={$musicPosition / $musicMetadata.duration}/>
-            <span>{minutesToTime($musicMetadata.duration)}</span>
+            <ProgressBar max={1} value={$musicMetadata && $musicPosition / $musicMetadata.duration}/>
+            <span>{minutesToTime($musicMetadata && $musicMetadata.duration)}</span>
         </div>
     </div>
 
     <div class="flex place-items-center place-content-end gap-4 mr-10">
-        <button class="btn-icon variant-ghost" on:click={() => weckPiCoreConnection.send({propertyName: "music.stop", value: true})}>
+        <button class="btn-icon variant-ghost" on:click={() => $weckpiCore.action("music.stop")}>
             <Fa icon={faStop}/>
         </button>
 
