@@ -9,4 +9,4 @@
     storePopup.set({computePosition, autoUpdate, offset, shift, flip, arrow});
 </script>
 
-<slot></slot>
+<slot />

@@ -10,8 +10,8 @@ import logging
 
 from weckpi.api.plugin_manager import PluginManager
 
-from weckpi.coreplugin.music.media_providers.local_fs import LocalFS
-from weckpi.coreplugin.music.media_players.mpv import MpvMediaPlayer
+from weckpi.plugin.coreplugin.music.media_providers.local_fs import LocalFS
+from weckpi.plugin.coreplugin.music.media_players.mpv import MpvMediaPlayer
 
 logging.root.setLevel(logging.DEBUG)
 

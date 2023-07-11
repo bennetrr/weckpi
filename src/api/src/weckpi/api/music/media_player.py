@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import *
-from collections.abc import Sequence
+from collections.abc import Sequence, Callable
 
 import weckpi.api.music as wpm
 
@@ -32,7 +32,7 @@ class MediaPlayer(ABC):
         """Jump to the previous element in the queue."""
 
     @abstractmethod
-    def add_media(self, media: wpm.MediaResource | Sequence[wpm.MediaResource]):
+    def add_media(self, mrid: str | Sequence[str]):
         """Add one or multiple items at the end of the queue."""
 
     @abstractmethod
@@ -51,7 +51,7 @@ class MediaPlayer(ABC):
 
     @property
     @abstractmethod
-    def queue(self) -> Sequence[wpm.MediaResource]:
+    def queue(self) -> Sequence[wpm.Metadata]:
         """Get the queue."""
 
     @abstractmethod
@@ -127,3 +127,11 @@ class MediaPlayer(ABC):
 
         :return: The duration in minutes.
         """
+
+    @abstractmethod
+    def set_on_queue_position_change(self, function: Callable[[int], None]):
+        """Set a function that is executed whenever the queue position changes."""
+
+    @abstractmethod
+    def set_on_position_change(self, function: Callable[[float], None]):
+        """Set a function that is executed whenever the position changed."""

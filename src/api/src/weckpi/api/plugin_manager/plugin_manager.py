@@ -7,16 +7,8 @@ from .registration_details import MediaProviderRegistration, MediaPlayerRegistra
 
 
 class PluginManager:
-    _instance: PluginManager = None
-
     _media_providers: dict[str, MediaProviderRegistration]
     _media_players: dict[str, MediaPlayerRegistration]
-
-    @classmethod
-    def get_instance(cls):
-        if cls._instance is None:
-            cls._instance = PluginManager()
-        return cls._instance
 
     def __init__(self):
         self._media_providers = {}
@@ -42,3 +34,15 @@ class PluginManager:
         if name not in self._media_players:
             raise KeyError(f'The media player {name} is not registered!')
         return self._media_players[name]
+
+
+_plugin_manager_instance: PluginManager | None = None
+
+
+def plugin_manager() -> PluginManager:
+    """Get the plugin manager object."""
+    global _plugin_manager_instance
+    if _plugin_manager_instance is None:
+        _plugin_manager_instance = PluginManager()
+    return _plugin_manager_instance
+

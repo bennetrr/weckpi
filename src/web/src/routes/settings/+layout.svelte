@@ -17,6 +17,8 @@
         </AppBar>
     </svelte:fragment>
 
+    <slot />
+
     <svelte:fragment slot="sidebarLeft">
         Settings Navigation
     </svelte:fragment>

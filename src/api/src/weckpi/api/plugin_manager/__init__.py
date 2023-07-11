@@ -1,1 +1,1 @@
-from .plugin_manager import PluginManager
+from .plugin_manager import plugin_manager

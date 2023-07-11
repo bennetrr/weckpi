@@ -3,12 +3,13 @@ from __future__ import annotations
 
 import logging
 import random
+from collections.abc import Callable
 from typing import Sequence
 
 import mpv
 
 from weckpi.api.music import MediaPlayer, MediaResource, Metadata
-from weckpi.api.plugin_manager import PluginManager
+from weckpi.api.plugin_manager import plugin_manager
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,9 @@ class MpvMediaPlayer(MediaPlayer):
     _shuffle: bool
     _repeat: bool
 
+    _on_queue_position_change: Callable[[int], None] | None
+    _on_position_change: Callable[[float], None] | None
+
     def __init__(self):
         logger.debug('MPV version: %s', mpv.MPV_VERSION)
 
@@ -47,12 +51,17 @@ class MpvMediaPlayer(MediaPlayer):
         self._shuffle = False
         self._repeat = False
 
+        self._on_queue_position_change = None
+        self._on_position_change = None
+
         # Event handlers
         def on_idle_status_change(_, is_idle: bool):
             """Event handler for the core_idle property."""
             print(f'{is_idle=}{", blocked" if self._block_on_idle_status_change or not is_idle else ""}')
 
             if not is_idle:
+                if self._on_queue_position_change is not None:
+                    self._on_queue_position_change(self._current_queue_index)
                 return
 
             if self._block_on_idle_status_change:
@@ -71,15 +80,19 @@ class MpvMediaPlayer(MediaPlayer):
 
         self._player.observe_property('core-idle', on_idle_status_change)
 
+        def on_time_pos_change(_, _2):
+            if self._on_position_change is None:
+                return
+            self._on_position_change(self.position)
+
+        self._player.observe_property('time-pos', on_time_pos_change)
+
     @staticmethod
     def _get_plugin_instance(mrid: str):
         """Get the plugin instance for the given MRID."""
         provider_id, provider_instance_id, _ = mrid.split(':', 2)
 
-        return PluginManager \
-            .get_instance() \
-            .get_media_provider(provider_id) \
-            .get_instance(provider_instance_id)
+        return plugin_manager().get_media_provider(provider_id).get_instance(provider_instance_id)
 
     def _play_current_item(self):
         """Get the media resource information for the MRID."""
@@ -224,6 +237,8 @@ class MpvMediaPlayer(MediaPlayer):
 
         :return: The position in minutes.
         """
+        if self._player.time_pos is None:
+            return 0
         return self._player.time_pos / 60
 
     @position.setter
@@ -302,7 +317,17 @@ class MpvMediaPlayer(MediaPlayer):
 
         :return: The duration in minutes.
         """
+        if self._player.duration is None:
+            return 0
         return self._player.duration / 60
 
     def __repr__(self):
         return f'Playing element {self._current_queue_index + 1} of {len(self._queue)}: {self.metadata}'
+
+    def set_on_queue_position_change(self, function: Callable[[int], None]):
+        """Set a function that is executed whenever the queue position changes."""
+        self._on_queue_position_change = function
+
+    def set_on_position_change(self, function: Callable[[float], None]):
+        """Set a function that is executed whenever the position changes."""
+        self._on_position_change = function

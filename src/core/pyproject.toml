@@ -19,6 +19,7 @@ python = "^3.11"
 weckpi-api = {path = "../api", develop = true}
 python-socketio = "^5.8.0"
 eventlet = "^0.33.3"
+weckpi-coreplugin = {path = "../coreplugin", develop = true}
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.17.4"

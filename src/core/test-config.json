@@ -1,0 +1,29 @@
+{
+    "music": {
+        "mediaProviders": [
+            {
+                "name": "local-fs",
+                "instances": [
+                    {
+                        "name": "local-fs",
+                        "auth": null
+                    }
+                ]
+            },
+            {
+                "name": "tidal",
+                "instances": [
+                    {
+                        "name": "user-...",
+                        "auth": {
+                            "token_type": "...",
+                            "access_token": "...",
+                            "refresh_token": "...",
+                            "expire_time": null
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

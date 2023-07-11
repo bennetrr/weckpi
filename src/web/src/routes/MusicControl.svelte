@@ -4,7 +4,7 @@
     import {faBackwardStep, faForwardStep, faPause, faPlay, faRepeat, faShuffle, faStop, faVolumeHigh, faVolumeLow, faVolumeMute} from "@fortawesome/free-solid-svg-icons";
     import {popup, type PopupSettings, ProgressBar} from "@skeletonlabs/skeleton";
 
-    import {weckpiCore} from "$lib/BackendConnection/WeckPiCoreConnection";
+    import weckpiCore from "$lib/BackendConnection/WeckPiCoreConnection";
     import {musicMetadata, musicPlaying, musicPosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
     import {minutesToTime} from "$lib/helpers/DateTimeHelpers";
 
@@ -38,7 +38,7 @@
 
 <div class="bg-surface-100-800-token p-4 grid gap-6" style="grid-template-columns: 20% 1fr 20%">
     <div class="flex flex-row gap-4 overflow-hidden whitespace-nowrap">
-        <img alt="Image" class="h-[90px] rounded-lg" src={$musicMetadata && $musicMetadata.image_uri}>
+        <img alt="Album Cover" class="h-[90px] rounded-lg" src={$musicMetadata && $musicMetadata.image_uri}>
         <div>
             <span class="font-bold" title={$musicMetadata && $musicMetadata.title}>{$musicMetadata && $musicMetadata.title}</span><br/>
             <span title={$musicMetadata && $musicMetadata.artist}>{$musicMetadata && $musicMetadata.artist}</span><br/>
@@ -52,7 +52,7 @@
                 <Fa icon={faShuffle}/>
             </button>
 
-            <button class="btn-icon variant-ghost" on:click={() => $weckpiCore.action("music.previous_song")}>
+            <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.previous-song")}>
                 <Fa icon={faBackwardStep}/>
             </button>
 
@@ -60,7 +60,7 @@
                 <Fa icon={$musicPlaying ? faPause : faPlay}/>
             </button>
 
-            <button class="btn-icon variant-ghost" on:click={() => $weckpiCore.action("music.next_song")}>
+            <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.next-song")}>
                 <Fa icon={faForwardStep}/>
             </button>
 
@@ -77,7 +77,7 @@
     </div>
 
     <div class="flex place-items-center place-content-end gap-4 mr-10">
-        <button class="btn-icon variant-ghost" on:click={() => $weckpiCore.action("music.stop")}>
+        <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.stop")}>
             <Fa icon={faStop}/>
         </button>
 

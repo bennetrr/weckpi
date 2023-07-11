@@ -72,5 +72,5 @@ class LocalFS(MediaProvider):
             title=media_file['Title'][0].value,
             artist=media_file['Author'][0].value,
             album=media_file['WM/AlbumTitle'][0].value,
-            image=image_path if image_path.is_file() else None
+            image=None
         )

@@ -10,3 +10,11 @@ class AuthenticationResponse:
     """"""
     succeeded: ...
     expires: ...
+
+
+@dataclass
+class OAuthCredentials:
+    token_type: str
+    access_token: str
+    refresh_token: str
+    expire_time: str

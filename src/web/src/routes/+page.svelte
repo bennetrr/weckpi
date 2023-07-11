@@ -1,22 +1,11 @@
 <script lang="ts">
-    //@ts-ignore
-    import Fa from "svelte-fa";
+    import Fa from "svelte-fa/src/fa.svelte";
     import {faCog} from "@fortawesome/free-solid-svg-icons";
 
-    import {musicMetadata, musicPlaying, musicPosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
-
-    import {onMount} from "svelte";
     import {AppBar, AppShell} from "@skeletonlabs/skeleton";
 
     import MusicControl from "./MusicControl.svelte";
     import Clock from "./Clock.svelte";
-    import {WeckPiCoreConnection, weckpiCore} from "$lib/BackendConnection/WeckPiCoreConnection";
-    import {initializeWeckPiCoreCommunication} from "$lib/BackendConnection/ParameterCommunication";
-
-    onMount(() => {
-        $weckpiCore = new WeckPiCoreConnection();
-        initializeWeckPiCoreCommunication($weckpiCore);
-    });
 </script>
 
 <svelte:head>
