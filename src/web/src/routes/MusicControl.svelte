@@ -38,7 +38,7 @@
 
 <div class="bg-surface-100-800-token p-4 grid gap-6" style="grid-template-columns: 20% 1fr 20%">
     <div class="flex flex-row gap-4 overflow-hidden whitespace-nowrap">
-        <img alt="Album Cover" class="h-[90px] rounded-lg" src={$musicMetadata && $musicMetadata.image_uri}>
+        <img alt="Album Cover" class="h-[90px] rounded-lg" src={$musicMetadata && $musicMetadata.image}>
         <div>
             <span class="font-bold" title={$musicMetadata && $musicMetadata.title}>{$musicMetadata && $musicMetadata.title}</span><br/>
             <span title={$musicMetadata && $musicMetadata.artist}>{$musicMetadata && $musicMetadata.artist}</span><br/>

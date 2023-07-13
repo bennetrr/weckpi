@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+from shutil import copy
+from uuid import uuid4
 
 import mutagen
 
@@ -14,6 +16,13 @@ class LocalFS(MediaProvider):
 
     The MRID format is local-fs:local-fs:/path/to/media/file.mp3
     """
+    _album_cover_dir: Path
+    _available_covers: dict[Path, str]
+
+    def __init__(self, album_cover_dir: Path):
+        self._album_cover_dir = album_cover_dir
+        self._album_cover_dir.mkdir(parents=True)
+        self._available_covers = {}
 
     def login(self, credential_file: Path):
         """
@@ -67,10 +76,17 @@ class LocalFS(MediaProvider):
         media_file = mutagen.File(path, easy=True)
 
         image_path = path.parent / 'Folder.jpg'
+        server_name = self._available_covers.get(image_path)
+
+        if server_name is None:
+            server_name = f'{uuid4()}.jpg'
+            copy(image_path, self._album_cover_dir / server_name)
+            self._available_covers[image_path] = server_name
 
         return Metadata(
             title=media_file['Title'][0].value,
             artist=media_file['Author'][0].value,
             album=media_file['WM/AlbumTitle'][0].value,
-            image=None
+            image=f'http://localhost:5001/local-fs/{server_name}',  # TODO make dynamic
+            duration=media_file.info.length / 60
         )

@@ -1,8 +1,8 @@
 import {io, type Socket} from "socket.io-client";
+import {debug} from "debug";
+import {PUBLIC_WECKPI_CORE_URL} from "$env/static/public"
 
 import {musicMetadata, musicPlaying, musicPosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
-
-import {debug} from "debug";
 
 const log = debug("weckpiWeb:weckpiCoreConnection");
 
@@ -12,14 +12,13 @@ export class WeckPiCoreConnection {
 
     public constructor() {
         log("Initializing weckpi core connection");
-        this.sio = io("ws://localhost:8000/");
+        this.sio = io(PUBLIC_WECKPI_CORE_URL);
         this.disabled = true;
 
         // Set the handler for incoming messages
         this.sio.on("property-change", ({prop, value}) => {
             this.disable();
             log("Received property change of %s to %O", prop, value);
-            console.error("Received property change of %s to %O", prop, value)
 
             switch (prop) {
                 case "music.metadata":

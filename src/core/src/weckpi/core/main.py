@@ -4,14 +4,12 @@ import importlib
 import logging
 import pkgutil
 from dataclasses import asdict
-
-import time
+from pathlib import Path
 from types import ModuleType
-
 import sys
 
 import socketio
-import eventlet.wsgi
+from flask import Flask
 
 import weckpi.plugin
 from weckpi.api.plugin_manager import plugin_manager
@@ -32,11 +30,13 @@ sio_logger = logging.getLogger('weckpi.core.main.socket')
 
 def main():
     sio = socketio.Server(
-        async_mode='eventlet',
+        async_mode='threading',
         logger=sio_logger,
         engineio_logger=sio_logger,
-        cors_allowed_origins='*'  # TODO Change for security
+        cors_allowed_origins='*',  # TODO Change for security
     )
+    app = Flask(__name__)
+    app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 
     def iter_namespace(ns_pkg: ModuleType):
         # Specifying the second argument (prefix) to iter_modules makes the
@@ -57,7 +57,7 @@ def main():
     logger.info('Found %s plugins: %s', len(discovered_plugins), discovered_plugins)
 
     player: MediaPlayer = plugin_manager().get_media_player('mpv').cls()
-    local_fs: MediaProvider = plugin_manager().get_media_provider('local-fs').cls()
+    local_fs: MediaProvider = plugin_manager().get_media_provider('local-fs').cls(Path('./tmp-static/local-fs'))
     plugin_manager().get_media_provider('local-fs').register_instance('local-fs', local_fs)
 
     playlist = [
@@ -134,11 +134,14 @@ def main():
                 player.stop()
 
     # player.set_on_queue_position_change(lambda value: sio.emit('property-change', {'prop': 'music.queue-position', 'value': value}))
-    player.set_on_queue_position_change(lambda value: sio.emit('property-change', {'prop': 'music.metadata', 'value': asdict(player.metadata)}))
-    # player.set_on_position_change(lambda value: sio.emit('property-change', {'prop': 'music.position', 'value': value}))
+    player.set_on_queue_position_change(
+        lambda value: sio.emit('property-change', {
+            'prop': 'music.metadata',
+            'value': {**asdict(player.metadata)}
+        }))
+    player.set_on_position_change(lambda value: sio.emit('property-change', {'prop': 'music.position', 'value': value}))
 
-    app = socketio.WSGIApp(sio)
-    eventlet.wsgi.server(eventlet.listen(('', 8000)), app)
+    app.run()
 
 
 if __name__ == '__main__':
