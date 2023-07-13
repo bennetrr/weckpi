@@ -6,6 +6,7 @@
 
     import MusicControl from "./MusicControl.svelte";
     import Clock from "./Clock.svelte";
+    import MusicQueue from "./MusicQueue.svelte";
 </script>
 
 <svelte:head>
@@ -23,6 +24,10 @@
                 </a>
             </svelte:fragment>
         </AppBar>
+    </svelte:fragment>
+
+    <svelte:fragment slot="sidebarLeft">
+        <MusicQueue/>
     </svelte:fragment>
 
     <main class="flex place-items-center place-content-center h-full h1">

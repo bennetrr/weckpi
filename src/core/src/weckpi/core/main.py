@@ -77,38 +77,40 @@ def main():
     def on_disconnect(sid):
         logger.info('Client %s disconnected', sid)
 
-    @sio.on('initial-data-request')
+    @sio.on('initialDataRequest')
     def on_initial_data_request(sid):
         logger.info('Client %s requested initial data', sid)
         player.play()
+        player.volume = 60
 
-        return {
+        data = {
             'music': {
-                'metadata': {
-                    'title': player.metadata.title,
-                    'artist': player.metadata.artist,
-                    'album': player.metadata.album,
-                    'image_uri': 'https://resources.tidal.com/images/2a85ef7a/1aef/43cc/8d2f/e9911c757c1a/1280x1280.jpg',
-                    'duration': player.duration
-                },
+                'queue': [asdict(x) for x in player.queue],
+                'queuePosition': player.queue_position,
                 'duration': player.duration,
                 'position': player.position,
-                'playing': True,
+                'isPlaying': True,
                 'shuffle': player.shuffle,
                 'repeat': player.repeat,
                 'volume': player.volume
             }
         }
 
-    @sio.on('property-change')
+        logger.debug(data)
+
+        return data
+
+    @sio.on('propertyChange')
     def on_property_change(sid, data: dict):
         prop, value = data.get('prop'), data.get('value')
         logger.info('Client %s changed property %s to %s', sid, prop, value)
 
         match prop:
+            case 'music.queuePosition':
+                player.queue_position = value
             case 'music.position':
                 player.position = value
-            case 'music.is_playing':
+            case 'music.isPlaying':
                 if value:
                     player.play()
                 else:
@@ -126,20 +128,15 @@ def main():
         logger.info('Client %s activated action %s', sid, action)
 
         match action:
-            case 'music.next-song':
+            case 'music.nextSong':
                 player.next()
-            case 'music.previous-song':
+            case 'music.previousSong':
                 player.previous()
             case 'music.stop':
                 player.stop()
 
-    # player.set_on_queue_position_change(lambda value: sio.emit('property-change', {'prop': 'music.queue-position', 'value': value}))
-    player.set_on_queue_position_change(
-        lambda value: sio.emit('property-change', {
-            'prop': 'music.metadata',
-            'value': {**asdict(player.metadata)}
-        }))
-    player.set_on_position_change(lambda value: sio.emit('property-change', {'prop': 'music.position', 'value': value}))
+    player.set_on_queue_position_change(lambda value: sio.emit('propertyChange', {'prop': 'music.queuePosition', 'value': value}))
+    player.set_on_position_change(lambda value: sio.emit('propertyChange', {'prop': 'music.position', 'value': value}))
 
     app.run()
 

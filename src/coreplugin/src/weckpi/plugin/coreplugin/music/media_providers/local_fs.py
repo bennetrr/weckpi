@@ -21,7 +21,7 @@ class LocalFS(MediaProvider):
 
     def __init__(self, album_cover_dir: Path):
         self._album_cover_dir = album_cover_dir
-        self._album_cover_dir.mkdir(parents=True)
+        self._album_cover_dir.mkdir(parents=True, exist_ok=True)
         self._available_covers = {}
 
     def login(self, credential_file: Path):

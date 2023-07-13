@@ -1,21 +1,24 @@
 <script lang="ts">
-    //@ts-ignore
-    import Fa from "svelte-fa";
+    import {debug} from "debug";
+
+    import {popup, type PopupSettings, ProgressBar, ProgressRadial} from "@skeletonlabs/skeleton";
+    import Fa from "svelte-fa/src/fa.svelte";
     import {faBackwardStep, faForwardStep, faPause, faPlay, faRepeat, faShuffle, faStop, faVolumeHigh, faVolumeLow, faVolumeMute} from "@fortawesome/free-solid-svg-icons";
-    import {popup, type PopupSettings, ProgressBar} from "@skeletonlabs/skeleton";
 
     import weckpiCore from "$lib/BackendConnection/WeckPiCoreConnection";
-    import {musicMetadata, musicPlaying, musicPosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
+    import {musicPlaying, musicPosition, musicQueue, musicQueuePosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
     import {minutesToTime} from "$lib/helpers/DateTimeHelpers";
 
-    function getVolumeIcon(volume: number) {
+    const log = debug("weckpiWeb:musicControl");
+
+    //region Volume Slider
+    function volumeIcon(volume: number) {
         if (volume === 0) return faVolumeMute;
         if (volume < 50) return faVolumeLow;
         return faVolumeHigh;
     }
 
-    let volumePopupOpen = false;
-    let onVolumeButtonClickedMultipleTimes = false;
+    let volumeButtonClickedMultipleTimes = false;
     let oldVolume = 0;
 
     const volumePopupSettings: PopupSettings = {
@@ -23,36 +26,42 @@
         target: "volumePopup",
         placement: "top",
         state: (e: Record<string, boolean>) => {
-            volumePopupOpen = e.state;
-            if (!e.state) onVolumeButtonClickedMultipleTimes = false;
+            if (!e.state) volumeButtonClickedMultipleTimes = false;
         }
     };
 
     function onVolumeButtonClick() {
-        if (onVolumeButtonClickedMultipleTimes) {
+        if (volumeButtonClickedMultipleTimes) {
             [oldVolume, $musicVolume] = [$musicVolume, oldVolume];
         }
-        onVolumeButtonClickedMultipleTimes = true;
+        volumeButtonClickedMultipleTimes = true;
     }
+
+    //endregion
 </script>
 
 <div class="bg-surface-100-800-token p-4 grid gap-6" style="grid-template-columns: 20% 1fr 20%">
     <div class="flex flex-row gap-4 overflow-hidden whitespace-nowrap">
-        <img alt="Album Cover" class="h-[90px] rounded-lg" src={$musicMetadata && $musicMetadata.image}>
-        <div>
-            <span class="font-bold" title={$musicMetadata && $musicMetadata.title}>{$musicMetadata && $musicMetadata.title}</span><br/>
-            <span title={$musicMetadata && $musicMetadata.artist}>{$musicMetadata && $musicMetadata.artist}</span><br/>
-            <span title={$musicMetadata && $musicMetadata.album}>{$musicMetadata && $musicMetadata.album}</span>
-        </div>
+        {#if $musicQueue && $musicQueue.length >= 1}
+            <img alt="Album Cover" class="h-[90px] rounded-lg" src={$musicQueue[$musicQueuePosition].image}>
+            <div>
+                <span class="font-bold">{$musicQueue[$musicQueuePosition].title}</span><br/>
+                <span>{$musicQueue[$musicQueuePosition].artist}</span><br/>
+                <span>{$musicQueue[$musicQueuePosition].album}</span>
+            </div>
+        {:else}
+            <ProgressRadial class="h-10 w-10" stroke={120}/>
+        {/if}
     </div>
 
     <div class="flex flex-col gap-4">
         <div class="flex place-content-center gap-4">
-            <button class="btn-icon" class:variant-ghost={!$musicShuffle} class:variant-ghost-primary={$musicShuffle} on:click={() => $musicShuffle = !$musicShuffle}>
+            <button class="btn-icon" class:variant-ghost={!$musicShuffle} class:variant-ghost-primary={$musicShuffle}
+                    on:click={() => $musicShuffle = !$musicShuffle}>
                 <Fa icon={faShuffle}/>
             </button>
 
-            <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.previous-song")}>
+            <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.previousSong")}>
                 <Fa icon={faBackwardStep}/>
             </button>
 
@@ -60,19 +69,20 @@
                 <Fa icon={$musicPlaying ? faPause : faPlay}/>
             </button>
 
-            <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.next-song")}>
+            <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.nextSong")}>
                 <Fa icon={faForwardStep}/>
             </button>
 
-            <button class="btn-icon" class:variant-ghost={!$musicRepeat} class:variant-ghost-primary={$musicRepeat} on:click={() => $musicRepeat = !$musicRepeat}>
+            <button class="btn-icon" class:variant-ghost={!$musicRepeat} class:variant-ghost-primary={$musicRepeat}
+                    on:click={() => $musicRepeat = !$musicRepeat}>
                 <Fa icon={faRepeat}/>
             </button>
         </div>
 
         <div class="flex place-items-center gap-6">
             <span>{minutesToTime($musicPosition)}</span>
-            <ProgressBar max={1} value={$musicMetadata && $musicPosition / $musicMetadata.duration}/>
-            <span>{minutesToTime($musicMetadata && $musicMetadata.duration)}</span>
+            <ProgressBar max={1} value={$musicPosition / $musicQueue[$musicQueuePosition].duration}/>
+            <span>{minutesToTime($musicQueue[$musicQueuePosition].duration)}</span>
         </div>
     </div>
 
@@ -82,7 +92,7 @@
         </button>
 
         <button class="btn-icon variant-ghost" on:click={onVolumeButtonClick} use:popup={volumePopupSettings}>
-            <Fa icon={getVolumeIcon($musicVolume)}/>
+            <Fa icon={volumeIcon($musicVolume)}/>
         </button>
     </div>
 

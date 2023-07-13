@@ -11,7 +11,5 @@ export function minutesToTime(minutes: number, showZeroHours: boolean = false): 
         time = `${hours}:${time}`;
     }
 
-    console.log(`Converted ${minutes} minutes to ${time}`);
-
     return time;
 }

@@ -8,8 +8,14 @@ interface MusicMetadata {
     duration: number;
 }
 
-export const musicQueue = writable<MusicMetadata[]>();
-export const musicQueuePosition = writable<number>();
+export const musicQueue = writable<MusicMetadata[]>([{
+    image: "",
+    artist: "",
+    album: "",
+    title: "",
+    duration: 0
+}]);
+export const musicQueuePosition = writable<number>(0);
 export const musicPosition = writable<number>();
 export const musicPlaying = writable<boolean>();
 export const musicShuffle = writable<boolean>();
