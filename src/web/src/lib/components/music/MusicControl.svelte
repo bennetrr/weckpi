@@ -1,15 +1,11 @@
 <script lang="ts">
-    import {debug} from "debug";
-
     import {popup, type PopupSettings, ProgressBar, ProgressRadial} from "@skeletonlabs/skeleton";
     import Fa from "svelte-fa/src/fa.svelte";
     import {faBackwardStep, faForwardStep, faPause, faPlay, faRepeat, faShuffle, faStop, faVolumeHigh, faVolumeLow, faVolumeMute} from "@fortawesome/free-solid-svg-icons";
 
     import weckpiCore from "$lib/BackendConnection/WeckPiCoreConnection";
     import {musicPlaying, musicPosition, musicQueue, musicQueuePosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
-    import {minutesToTime} from "$lib/helpers/DateTimeHelpers";
-
-    const log = debug("weckpiWeb:musicControl");
+    import {minutesToTime} from "$lib/utilities/DateTime";
 
     //region Volume Slider
     function volumeIcon(volume: number) {

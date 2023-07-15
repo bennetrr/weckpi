@@ -1,6 +1,6 @@
 import {writable} from "svelte/store";
 
-interface MusicMetadata {
+export interface MusicMetadata {
     title: string;
     artist: string;
     album: string;
@@ -9,11 +9,7 @@ interface MusicMetadata {
 }
 
 export const musicQueue = writable<MusicMetadata[]>([{
-    image: "",
-    artist: "",
-    album: "",
-    title: "",
-    duration: 0
+    image: "", artist: "", album: "", title: "", duration: 0
 }]);
 export const musicQueuePosition = writable<number>(0);
 export const musicPosition = writable<number>();

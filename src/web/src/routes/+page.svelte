@@ -4,9 +4,9 @@
 
     import {AppBar, AppShell} from "@skeletonlabs/skeleton";
 
-    import MusicControl from "./MusicControl.svelte";
-    import Clock from "./Clock.svelte";
-    import MusicQueue from "./MusicQueue.svelte";
+    import MusicControl from "$lib/components/music/MusicControl.svelte";
+    import Clock from "$lib/components/Clock.svelte";
+    import MusicQueue from "$lib/components/music/MusicQueue.svelte";
 </script>
 
 <svelte:head>

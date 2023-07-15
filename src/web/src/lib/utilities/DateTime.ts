@@ -1,7 +1,7 @@
 /**
  * Convert the given amount of minutes into a human-readable time format ([HH:][M]M:SS)
  */
-export function minutesToTime(minutes: number, showZeroHours: boolean = false): string {
+export function minutesToTime(minutes: number, showZeroHours = false): string {
     const hours = Math.floor(minutes / 60);
     const minutesLeft = Math.floor(minutes % 60);
     const seconds = Math.floor((minutes - Math.floor(minutes)) * 60);

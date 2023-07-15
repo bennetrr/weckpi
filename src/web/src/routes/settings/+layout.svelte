@@ -1,7 +1,7 @@
 <script>
-    import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
     import {AppBar, AppShell} from "@skeletonlabs/skeleton";
-    import Fa from "svelte-fa";
+    import Fa from "svelte-fa/src/fa.svelte";
+    import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 </script>
 
 <AppShell>
@@ -17,7 +17,7 @@
         </AppBar>
     </svelte:fragment>
 
-    <slot />
+    <slot/>
 
     <svelte:fragment slot="sidebarLeft">
         Settings Navigation

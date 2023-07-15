@@ -2,9 +2,21 @@ import {io, type Socket} from "socket.io-client";
 import {debug} from "debug";
 import {PUBLIC_WECKPI_CORE_URL} from "$env/static/public";
 
-import {musicPlaying, musicPosition, musicQueue, musicQueuePosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
+import {type MusicMetadata, musicPlaying, musicPosition, musicQueue, musicQueuePosition, musicRepeat, musicShuffle, musicVolume} from "$lib/BackendConnection/ParameterStore";
 
 const log = debug("weckpiWeb:weckpiCoreConnection");
+
+type InitialDataResponse = {
+    music: {
+        queue: MusicMetadata[],
+        queuePosition: number,
+        isPlaying: boolean,
+        repeat: boolean,
+        shuffle: boolean,
+        volume: number,
+        position: number
+    }
+}
 
 export class WeckPiCoreConnection {
     public sio: Socket;
@@ -63,8 +75,8 @@ export class WeckPiCoreConnection {
         musicPosition.subscribe((value) => this.propertyChange("music.position", value));
 
         // Request the initial dataset
-        this.sio.emit("initialDataRequest", (initialData: any) => {
-            log("Received initial dataset: %O", initialData)
+        this.sio.emit("initialDataRequest", (initialData: InitialDataResponse) => {
+            log("Received initial dataset: %O", initialData);
             musicQueue.set(initialData.music.queue);
             musicQueuePosition.set(initialData.music.queuePosition);
             musicPlaying.set(initialData.music.isPlaying);
@@ -89,7 +101,7 @@ export class WeckPiCoreConnection {
         this.disabled = true;
     }
 
-    public propertyChange(prop: string, value: any) {
+    public propertyChange<T>(prop: string, value: T) {
         if (this.disabled) {
             log("Change of property %s suppressed, because disabled=%s", prop, this.disabled);
             return;
