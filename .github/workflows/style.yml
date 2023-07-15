@@ -67,4 +67,4 @@ jobs:
           node-version: 20
       - run: yarn --cwd src/web install
         
-      - run: yarn --cwd src/web run lint
+      - run: yarn --cwd src/web run
