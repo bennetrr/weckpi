@@ -16,9 +16,9 @@ from = "src"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-weckpi-api = {path = "../api", develop = true}
-tidalapi = "^0.7.1"
-mpv = "^1.0.3"
+weckpi-api = { path = "../api", develop = true }
+tidalapi = "^0.7.2"
+mpv = "^1.0.4"
 mutagen = "^1.46.0"
 
 [tool.poetry.group.dev.dependencies]

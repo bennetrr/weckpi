@@ -1,14 +1,15 @@
+"""Base class for all media providers."""
 from __future__ import annotations
 
-from abc import *
-from pathlib import Path
+from abc import ABC, abstractmethod
 
 import weckpi.api.music as wpm
+from weckpi.api.authentication import AuthenticationDetails, AuthenticationResult, OAuthSession
 
 
 class MediaProvider(ABC):
     """
-    Interface for all media providers.
+    Base Class for all media providers.
 
     A media provider class contains the code for accessing media resources that are saved on the disk,
     in the local network or somewhere on the internet.
@@ -20,24 +21,31 @@ class MediaProvider(ABC):
     - Getting a playable URI
     - Getting metadata like title, artist, album image, etc.
 
-    MRID: provider_id:provider_instance_id:provider_specific_id
+    The MRID format (media resource ID) is used for exchanging and saving media resources.
+    It's a simple string in the format ``providerId:providerInstanceId:providerSpecificId``.
+    Every part should be in camelCase (if possible) and seperated by a colon (``:``).
+    For the ``providerSpecificId``, colons are allowed, since only the first two are used for separation.
 
     Examples:
 
-    - tidal:my-user:song-from-artist
-    - local-fs:local-fs:/mnt/daten/Music/Path/To/Song.mp3
+    - ``tidal:myUser:songFromArtist``
+    - ``localFs:localFs:/mnt/daten/Music/Path/To/Song.mp3``
     """
 
     @abstractmethod
-    def login(self, credential_file: Path):
-        """Sign in at the provider."""
+    def __init__(self, **kwargs):
+        pass
 
     @abstractmethod
-    def search(self, search_term: str) -> NotImplemented:
+    def login(self, auth_session: OAuthSession) -> AuthenticationResult | list[AuthenticationDetails]:
+        """Log in to the provider."""
+
+    @abstractmethod
+    def search(self, search_term: str) -> list[wpm.SearchResult]:
         """Search the provider's available content for the search term."""
 
     @abstractmethod
-    def explore(self, path: str = "/") -> NotImplemented:
+    def explore(self, mrid: str) -> list[wpm.SearchResult]:
         """List the provider's available content in the given path."""
 
     @abstractmethod

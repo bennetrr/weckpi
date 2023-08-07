@@ -1,2 +1,12 @@
 [FORMAT]
 max-line-length=120
+
+[MESSAGE CONTROL]
+disable=
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-locals,
+    too-many-statements,
+    too-many-branches,
+    too-many-return-statements,
+    too-many-instance-attributes

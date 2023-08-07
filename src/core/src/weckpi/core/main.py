@@ -5,15 +5,15 @@ import logging
 import pkgutil
 from dataclasses import asdict
 from pathlib import Path
-from types import ModuleType
-import sys
+from typing import Any
 
 import socketio
+import sys
 from flask import Flask
 
 import weckpi.plugin
-from weckpi.api.plugin_manager import plugin_manager
 from weckpi.api.music import MediaPlayer, MediaProvider
+from weckpi.api.plugin_manager import plugin_manager
 
 root_logger = logging.getLogger('weckpi')
 root_logger.setLevel(logging.DEBUG)
@@ -28,6 +28,10 @@ logger = logging.getLogger('weckpi.core.main')
 sio_logger = logging.getLogger('weckpi.core.main.socket')
 
 
+# TODO Unit / integration testing
+# TODO Split into submodules
+# TODO Implement settings and music selector
+
 def main():
     sio = socketio.Server(
         async_mode='threading',
@@ -38,7 +42,7 @@ def main():
     app = Flask(__name__)
     app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 
-    def iter_namespace(ns_pkg: ModuleType):
+    def iter_namespace(ns_pkg: Any):
         # Specifying the second argument (prefix) to iter_modules makes the
         # returned name an absolute name instead of a relative one. This allows
         # import_module to work without having to do additional modification to
@@ -57,8 +61,9 @@ def main():
     logger.info('Found %s plugins: %s', len(discovered_plugins), discovered_plugins)
 
     player: MediaPlayer = plugin_manager().get_media_player('mpv').cls()
-    local_fs: MediaProvider = plugin_manager().get_media_provider('local-fs').cls(Path('./tmp-static/local-fs'))
-    plugin_manager().get_media_provider('local-fs').register_instance('local-fs', local_fs)
+    local_fs: MediaProvider = (plugin_manager().get_media_provider('localFs')
+                               .cls(album_cover_dir=Path('./tmp-static/local-fs')))
+    plugin_manager().get_media_provider('localFs').register_instance('localFs', local_fs)
 
     playlist = [
         'local-fs:local-fs:/Users/wemogymac/Music/VNV Nation/Transnational/04 Retaliate.wma',
@@ -67,7 +72,7 @@ def main():
         'local-fs:local-fs:/Users/wemogymac/Music/VNV Nation/Transnational/08 Aeroscope.wma',
         'local-fs:local-fs:/Users/wemogymac/Music/VNV Nation/Transnational/09 Off Screen.wma'
     ]
-    player.add_media(playlist)
+    player.add_items(playlist)
 
     @sio.on('connect')
     def on_connect(sid, environ, auth):
@@ -87,12 +92,11 @@ def main():
             'music': {
                 'queue': [asdict(x) for x in player.queue],
                 'queuePosition': player.queue_position,
-                'duration': player.duration,
-                'position': player.position,
                 'isPlaying': True,
                 'shuffle': player.shuffle,
                 'repeat': player.repeat,
-                'volume': player.volume
+                'volume': player.volume,
+                'position': player.position
             }
         }
 
@@ -135,8 +139,15 @@ def main():
             case 'music.stop':
                 player.stop()
 
-    player.set_on_queue_position_change(lambda value: sio.emit('propertyChange', {'prop': 'music.queuePosition', 'value': value}))
-    player.set_on_position_change(lambda value: sio.emit('propertyChange', {'prop': 'music.position', 'value': value}))
+    player.on_queue_position_change = lambda value: sio.emit(
+        'propertyChange',
+        {'prop': 'music.queuePosition', 'value': value}
+        )
+
+    player.on_position_change = lambda value: sio.emit(
+        'propertyChange',
+        {'prop': 'music.position', 'value': value}
+        )
 
     app.run()
 

@@ -1,3 +1,4 @@
-from .authenication_response import AuthenticationResponse, OAuthCredentials
-from .code_authentication_response import CodeAuthenticationResponse
-from .link_authentication_response import LinkAuthenticationResponse
+"""Tools for authenticating to services."""
+from .authentication_details import AuthenticationDetails, CodeAuthenticationDetails, LinkAuthenticationDetails
+from .authentication_result import AuthenticationResult
+from .oauth_session import OAuthSession
