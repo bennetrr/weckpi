@@ -24,7 +24,7 @@ tidal = Tidal('demo')
 
 plugin_manager().get_media_provider('tidal').register_instance('demo', tidal)
 
-with Path('tidal.secret.json').open('r') as secret_file:
+with Path('tidal.secret.json').open('r', encoding='utf-8') as secret_file:
     secret_json = json.load(secret_file)
 
 tidal.login(

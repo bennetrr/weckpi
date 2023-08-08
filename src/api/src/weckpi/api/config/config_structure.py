@@ -21,7 +21,7 @@ class WeckPiConfig:
     @classmethod
     def from_json(cls, config_file: Path) -> WeckPiConfig:
         """Create a WeckPiConfig object from a json file."""
-        with config_file.open('r') as config_stream:
+        with config_file.open('r', encoding='utf-8') as config_stream:
             config_json: dict = json.load(config_stream)
 
         return cls(
@@ -34,7 +34,7 @@ class WeckPiConfig:
             'music': self.music.to_json()
         }
 
-        with config_file.open('w') as config_stream:
+        with config_file.open('w', encoding='utf-8') as config_stream:
             json.dump(config_json, config_stream, indent=4)
 
 
