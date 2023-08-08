@@ -18,5 +18,5 @@ class SearchResult:
     mrid: str
     is_media_resource: bool
     name: str
-    image: str
+    image: str | None
     text: str = ''

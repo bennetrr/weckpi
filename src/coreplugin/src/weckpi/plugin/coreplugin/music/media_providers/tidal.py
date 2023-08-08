@@ -5,15 +5,18 @@ import logging
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Literal
 
+import math
 import tidalapi as tidal
 
 from weckpi.api.authentication import AuthenticationResult, CodeAuthenticationDetails, LinkAuthenticationDetails, \
     OAuthSession
 from weckpi.api.music import MediaNotAvailableException, MediaProvider, MediaResource, Metadata, SearchResult
+from weckpi.api.utilities import flatten_dict
 
 logger = logging.getLogger(__name__)
 
 MediaTypes = Literal['album', 'artist', 'track', 'video', 'playlist']
+TidalObjects = tidal.Artist | tidal.Album | tidal.Track | tidal.Video | tidal.Playlist
 
 
 class Tidal(MediaProvider):
@@ -82,50 +85,76 @@ class Tidal(MediaProvider):
             )
         )
 
+    def _get_image(self, tidal_obj: TidalObjects) -> str | None:
+        """Get the image from the TIDAL object. If no image is found, ``None`` is returned."""
+        try:
+            if isinstance(tidal_obj, tidal.Artist):
+                return tidal_obj.image(750)
+            if isinstance(tidal_obj, tidal.Album):
+                return tidal_obj.image(1280)
+            if isinstance(tidal_obj, tidal.Track):
+                return self._get_image(tidal_obj.album)
+            if isinstance(tidal_obj, tidal.Video):
+                return self._get_image(tidal_obj.album)
+            if isinstance(tidal_obj, tidal.Playlist):
+                return tidal_obj.image(1080)
+            raise TypeError(f'Object of class {tidal_obj.__class__.__name__} is not a valid TIDAL type!')
+        except ValueError as exc:
+            if isinstance(exc, AttributeError):  # TODO Temporary, fixed in upcoming release
+                return None
+
+            if exc.args[0] == 'No image available':
+                return None
+            raise exc
+
+    def _to_search_result(self, tidal_obj: TidalObjects) -> SearchResult:
+        """Convert a TIDAL object into a search result."""
+        if isinstance(tidal_obj, tidal.Artist):
+            return SearchResult(
+                mrid=f'tidal:{self._instance_id}:artist:{tidal_obj.id}',
+                is_media_resource=False,
+                name=tidal_obj.name,
+                image=self._get_image(tidal_obj)
+            )
+        if isinstance(tidal_obj, tidal.Album):
+            return SearchResult(
+                mrid=f'tidal:{self._instance_id}:album:{tidal_obj.id}',
+                is_media_resource=False,
+                name=tidal_obj.name,
+                text=f'Album von {tidal_obj.artist.name}',  # TODO Localization
+                image=self._get_image(tidal_obj)
+            )
+        if isinstance(tidal_obj, tidal.Track):
+            return SearchResult(
+                mrid=f'tidal:{self._instance_id}:track:{tidal_obj.id}',
+                is_media_resource=True,
+                name=tidal_obj.name,
+                text=f'Song von {tidal_obj.artist.name}',  # TODO Localization
+                image=self._get_image(tidal_obj)
+            )
+        if isinstance(tidal_obj, tidal.Video):
+            return SearchResult(
+                mrid=f'tidal:{self._instance_id}:video:{tidal_obj.id}',
+                is_media_resource=True,
+                name=tidal_obj.name,
+                text=f'Video von {tidal_obj.artist.name}',  # TODO Localization
+                image=self._get_image(tidal_obj)
+            )
+        if isinstance(tidal_obj, tidal.Playlist):
+            return SearchResult(
+                mrid=f'tidal:{self._instance_id}:playlist:{tidal_obj.id}',
+                is_media_resource=False,
+                name=tidal_obj.name,
+                text=f'Playlist{f" von {tidal_obj.creator.name}" if tidal_obj.creator else ""}',  # TODO Localization
+                image=self._get_image(tidal_obj)
+            )
+        raise TypeError(f'Object of class {tidal_obj.__class__.__name__} is not a valid TIDAL type!')
+
     def search(self, search_term: str):
         """Search TIDAL for the search term."""
-        # TODO Reduce duplication
-        res = self._session.search(search_term)
-
-        return [
-            *[SearchResult(
-                mrid=f'tidal:{self._instance_id}:album:{x.id}',
-                is_media_resource=False,
-                name=x.name,
-                text=f'Album von {x.artist.name}',  # TODO Localization
-                image=x.image(1280)
-            ) for x in res['albums']],
-
-            *[SearchResult(
-                mrid=f'tidal:{self._instance_id}:artist:{x.id}',
-                is_media_resource=False,
-                name=x.name,
-                image=x.image(750)
-            ) for x in res['artists']],
-
-            *[SearchResult(
-                mrid=f'tidal:{self._instance_id}:track:{x.id}',
-                is_media_resource=True,
-                name=x.name,
-                text=f'Song von {x.artist.name}',  # TODO Localization
-                image=x.album.image(1280)
-            ) for x in res['tracks']],
-
-            *[SearchResult(
-                mrid=f'tidal:{self._instance_id}:video:{x.id}',
-                is_media_resource=True,
-                name=x.name,
-                text=f'Video von {x.artist.name}',  # TODO Localization
-                image=x.album.image(1280)
-            ) for x in res['videos']],
-
-            *[SearchResult(
-                mrid=f'tidal:{self._instance_id}:playlist:{x.id}',
-                is_media_resource=False,
-                name=x.name,
-                text=f'Playlist{("von " + x.creator.name) if x.creator else ""}',  # TODO Localization
-                image=x.image(1080)
-            ) for x in res['playlists']]]
+        results: dict[str, TidalObjects] = self._session.search(search_term)
+        flat_results = flatten_dict(results)
+        return [self._to_search_result(res) for res in flat_results]
 
     def explore(self, mrid: str = None):
         """
@@ -134,7 +163,6 @@ class Tidal(MediaProvider):
         :param mrid: Must be the MRID of type ``artist``, ``album`` or ``playlist``.
                      If omitted or ``None``, the "My ..." elements are returned.
         """
-        # TODO Reduce duplication
         if mrid is None:
             mrid = f'tidal:{self._instance_id}:library:overview'
 
@@ -147,194 +175,91 @@ class Tidal(MediaProvider):
                         mrid=f'tidal:{self._instance_id}:library:playlists',
                         is_media_resource=False,
                         name=f'Playlists',  # TODO Localization
-                        image=''  # TODO Image
+                        image=None  # TODO Image
                     ),
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:artists',
                         is_media_resource=False,
                         name=f'Künstler',  # TODO Localization
-                        image=''  # TODO Image
+                        image=None  # TODO Image
                     ),
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:albums',
                         is_media_resource=False,
                         name=f'Alben',  # TODO Localization
-                        image=''  # TODO Image
+                        image=None  # TODO Image
                     ),
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:tracks',
                         is_media_resource=False,
                         name=f'Songs',  # TODO Localization
-                        image=''  # TODO Image
+                        image=None  # TODO Image
                     ),
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:videos',
                         is_media_resource=False,
                         name=f'Videos',  # TODO Localization
-                        image=''  # TODO Image
+                        image=None  # TODO Image
                     ),
-                ]
-            if tidal_id == 'playlists':
-                playlists: list[tidal.Playlist] = [
-                    *self._session.user.playlists(),
-                    *self._session.user.favorites.playlists()
-                ]
-
-                return [
-                    SearchResult(
-                        mrid=f'tidal:{self._instance_id}:playlist:{x.id}',
-                        is_media_resource=False,
-                        name=x.name,
-                        text=f'Playlist von {x.creator.name}',  # TODO Localization
-                        image=x.image(1080)
-                    ) for x in playlists
                 ]
             if tidal_id == 'artists':
                 artists: list[tidal.Artist] = self._session.user.favorites.artists()
-
-                return [
-                    SearchResult(
-                        mrid=f'tidal:{self._instance_id}:artist:{x.id}',
-                        is_media_resource=False,
-                        name=x.name,
-                        image=''  # x.image(750)
-                    ) for x in artists
-                ]
+                return [self._to_search_result(x) for x in artists]
             if tidal_id == 'albums':
                 albums: list[tidal.Album] = self._session.user.favorites.albums()
-
-                return [
-                    SearchResult(
-                        mrid=f'tidal:{self._instance_id}:album:{x.id}',
-                        is_media_resource=False,
-                        name=x.name,
-                        text=f'Album von {x.artist.name}',  # TODO Localization
-                        image=x.image(1280)
-                    ) for x in albums
-                ]
+                return [self._to_search_result(x) for x in albums]
             if tidal_id == 'tracks':
                 tracks: list[tidal.Track] = self._session.user.favorites.tracks()
-
-                return [
-                    SearchResult(
-                        mrid=f'tidal:{self._instance_id}:track:{x.id}',
-                        is_media_resource=True,
-                        name=x.name,
-                        text=f'Song von {x.artist.name}',  # TODO Localization
-                        image=x.album.image(1280)
-                    ) for x in tracks
-                ]
+                return [self._to_search_result(x) for x in tracks]
             if tidal_id == 'videos':
                 videos: list[tidal.Video] = self._session.user.favorites.videos()
-
-                return [
-                    SearchResult(
-                        mrid=f'tidal:{self._instance_id}:video:{x.id}',
-                        is_media_resource=True,
-                        name=x.name,
-                        text=f'Song von {x.artist.name}',  # TODO Localization
-                        image=x.album.image(1280)
-                    ) for x in videos
-                ]
+                return [self._to_search_result(x) for x in videos]
+            if tidal_id == 'playlists':
+                playlists = [*self._session.user.playlists(), *self._session.user.favorites.playlists()]
+                return [self._to_search_result(x) for x in playlists]
             raise ValueError(f'TIDAL type library:{tidal_id} is not a valid type!')
-        if tidal_type == 'playlist':
-            items: list[tidal.Track | tidal.Video] = self._session.playlist(tidal_id).items()  # TODO Use offset
-            items.extend(self._session.playlist(tidal_id).items(100, 100))
-
-            result: list[SearchResult] = []
-
-            for x in items:
-                if not x.available:
-                    continue
-
-                if isinstance(x, tidal.Track):
-                    result.append(
-                        SearchResult(
-                            mrid=f'tidal:{self._instance_id}:track:{x.id}',
-                            is_media_resource=True,
-                            name=x.name,
-                            text=f'Song von {x.artist.name}',  # TODO Localization
-                            image=x.album.image(1280)
-                        )
-                    )
-                elif isinstance(x, tidal.Video):
-                    result.append(
-                        SearchResult(
-                            mrid=f'tidal:{self._instance_id}:video:{x.id}',
-                            is_media_resource=True,
-                            name=x.name,
-                            text=f'Video von {x.artist.name}',  # TODO Localization
-                            image=x.album.image(1280)
-                        )
-                    )
-
-            return result
         if tidal_type == 'artist':
             if tidal_id.endswith(':allTracks'):
-                return [
-                    SearchResult(
-                        mrid=f'tidal:{self._instance_id}:track:{x.id}',
-                        is_media_resource=True,
-                        name=x.name,
-                        text=f'Song von {x.artist.name}',
-                        image=x.album.image(1280)
-                    ) for x in self._session.artist(tidal_id.removesuffix(':allTracks')).get_top_tracks()
-                ]
+                return [self._to_search_result(x)
+                        for x in self._session.artist(tidal_id.removesuffix(':allTracks')).get_top_tracks()]
+
+            tidal_obj = self._session.artist(tidal_id)
 
             albums: list[tidal.Album] = [
-                *self._session.artist(tidal_id).get_albums(),
-                *self._session.artist(tidal_id).get_albums_ep_singles(),
-                *self._session.artist(tidal_id).get_albums_other()
+                *tidal_obj.get_albums(),
+                *tidal_obj.get_albums_ep_singles(),
+                *tidal_obj.get_albums_other()
             ]
 
             result: list[SearchResult] = [
                 SearchResult(
                     mrid=f'{mrid}:allTracks',
                     is_media_resource=False,
-                    name='Alle Songs',
-                    image=''  # TODO Image
+                    name='Alle Songs',  # TODO Localization
+                    image=self._get_image(tidal_obj)
                 )
             ]
 
-            for x in albums:
-                result.append(
-                    SearchResult(
-                        mrid=f'tidal:{self._instance_id}:album:{x.id}',
-                        is_media_resource=False,
-                        name=x.name,
-                        text=f'Album von {x.artist.name}',  # TODO Localization
-                        image=x.image(1280)
-                    )
-                )
+            result.extend([self._to_search_result(x) for x in albums])
             return result
         if tidal_type == 'album':
-            items: list[tidal.Track | tidal.Video] = self._session.album(tidal_id).items()  # TODO Use offset
+            tidal_obj = self._session.album(tidal_id)
+            items: list[tidal.Track | tidal.Video] = []
 
-            result: list[SearchResult] = []
+            for i in range(math.ceil(tidal_obj.num_tracks + tidal_obj.num_videos / 100)):
+                items.extend(tidal_obj.items(100, 100 * i))
+            return [self._to_search_result(x) for x in items]
+        if tidal_type == 'playlist':
+            tidal_obj = self._session.playlist(tidal_id)
+            items: list[tidal.Track | tidal.Video] = []
 
-            for x in items:
-                if isinstance(x, tidal.Track):
-                    result.append(
-                        SearchResult(
-                            mrid=f'tidal:{self._instance_id}:track:{x.id}',
-                            is_media_resource=True,
-                            name=x.name,
-                            text=f'Song von {x.artist.name}',  # TODO Localization
-                            image=x.album.image(1280)
-                        )
-                    )
-                elif isinstance(x, tidal.Video):
-                    result.append(
-                        SearchResult(
-                            mrid=f'tidal:{self._instance_id}:video:{x.id}',
-                            is_media_resource=True,
-                            name=x.name,
-                            text=f'Video von {x.artist.name}',  # TODO Localization
-                            image=x.album.image(1280)
-                        )
-                    )
+            for i in range(math.ceil(tidal_obj.num_tracks + tidal_obj.num_videos / 100)):
+                items.extend(tidal_obj.items(100, 100 * i))
+            return [self._to_search_result(x) for x in items if x.available]
 
-            return result
+        if tidal_type in ['track', 'video']:
+            raise ValueError(f'TIDAL type {tidal_type} is not explorable!')
+        raise ValueError(f'TIDAL type {tidal_type} is not a valid type!')
 
     def _check_mrid(self, mrid: str) -> tuple[str, str, MediaTypes, str]:
         """Split the MRID and check, if it has the right type."""
@@ -354,64 +279,42 @@ class Tidal(MediaProvider):
 
         return provider_id, instance_id, tidal_type, tidal_id
 
-    def resolve_mrid(self, mrid: str):
-        """Get all the information of the given media resource like URI and metadata."""
-        # TODO Reduce duplication
+    def _get_track_or_video(self, mrid: str) -> tidal.Track | tidal.Video:
+        """Get the track or video object for the given MRID."""
         _, _, tidal_type, tidal_id = self._check_mrid(mrid)
 
         if tidal_type == 'track':
-            tidal_obj = self._session.track(tidal_id)
-
-            if not tidal_obj.available:
-                raise MediaNotAvailableException
-
-            return MediaResource(
-                provider=self, mrid=mrid, metadata=self.get_metadata(mrid), uri=tidal_obj.get_url(), continuous=False
-            )
-
+            return self._session.track(tidal_id)
         if tidal_type == 'video':
-            tidal_obj = self._session.video(tidal_id)
-
-            if not tidal_obj.available:
-                raise MediaNotAvailableException
-
-            return MediaResource(
-                provider=self, mrid=mrid, metadata=self.get_metadata(mrid), uri=tidal_obj.get_url(), continuous=False
-            )
-
-        if tidal_type in ['album', 'artist', 'playlist']:
-            raise ValueError(f'TIDAL type {tidal_type} is not playable and cannot be resolved!')
-
-        raise ValueError(f'TIDAL type {tidal_type} is not a valid type!')
-
-    def get_metadata(self, mrid: str):
-        """Get the metadata of the given media resource."""
-        # TODO Reduce duplication
-        _, _, tidal_type, tidal_id = self._check_mrid(mrid)
-
-        if tidal_type == 'track':
-            tidal_obj = self._session.track(tidal_id)
-
-            return Metadata(
-                title=tidal_obj.name,
-                artist=tidal_obj.artist.name,
-                album=tidal_obj.album.name,
-                image=tidal_obj.album.image(1280),
-                duration=tidal_obj.duration / 60
-            )
-
-        if tidal_type == 'video':
-            tidal_obj = self._session.video(tidal_id)
-
-            return Metadata(
-                title=tidal_obj.name,
-                artist=tidal_obj.artist.name,
-                album=tidal_obj.album.name,
-                image=tidal_obj.image(),
-                duration=tidal_obj.duration / 60
-            )
+            return self._session.video(tidal_id)
 
         if tidal_type in ['album', 'artist', 'playlist']:
             raise ValueError(f'TIDAL type {tidal_type} is not playable and has no metadata!')
-
         raise ValueError(f'TIDAL type {tidal_type} is not a valid type!')
+
+    def resolve_mrid(self, mrid: str):
+        """Get all the information of the given media resource like URI and metadata."""
+        tidal_obj = self._get_track_or_video(mrid)
+
+        if not tidal_obj.available:
+            raise MediaNotAvailableException
+
+        return MediaResource(
+            provider=self,
+            mrid=mrid,
+            metadata=self.get_metadata(mrid),
+            uri=tidal_obj.get_url(),
+            continuous=False
+        )
+
+    def get_metadata(self, mrid: str):
+        """Get the metadata of the given media resource."""
+        tidal_obj = self._get_track_or_video(mrid)
+
+        return Metadata(
+            title=tidal_obj.name,
+            artist=tidal_obj.artist.name,
+            album=tidal_obj.album.name,
+            image=self._get_image(tidal_obj),
+            duration=tidal_obj.duration / 60
+        )
