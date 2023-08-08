@@ -99,7 +99,7 @@ class Tidal(MediaProvider):
             if isinstance(tidal_obj, tidal.Playlist):
                 return tidal_obj.image(1080)
             raise TypeError(f'Object of class {tidal_obj.__class__.__name__} is not a valid TIDAL type!')
-        except ValueError as exc:
+        except (AttributeError, ValueError) as exc:
             if isinstance(exc, AttributeError):  # TODO Temporary, fixed in upcoming release
                 return None
 
@@ -153,6 +153,7 @@ class Tidal(MediaProvider):
     def search(self, search_term: str):
         """Search TIDAL for the search term."""
         results: dict[str, TidalObjects] = self._session.search(search_term)
+        del results['top_hit']
         flat_results = flatten_dict(results)
         return [self._to_search_result(res) for res in flat_results]
 
@@ -174,31 +175,31 @@ class Tidal(MediaProvider):
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:playlists',
                         is_media_resource=False,
-                        name=f'Playlists',  # TODO Localization
+                        name='Playlists',  # TODO Localization
                         image=None  # TODO Image
                     ),
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:artists',
                         is_media_resource=False,
-                        name=f'Künstler',  # TODO Localization
+                        name='Künstler',  # TODO Localization
                         image=None  # TODO Image
                     ),
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:albums',
                         is_media_resource=False,
-                        name=f'Alben',  # TODO Localization
+                        name='Alben',  # TODO Localization
                         image=None  # TODO Image
                     ),
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:tracks',
                         is_media_resource=False,
-                        name=f'Songs',  # TODO Localization
+                        name='Songs',  # TODO Localization
                         image=None  # TODO Image
                     ),
                     SearchResult(
                         mrid=f'tidal:{self._instance_id}:library:videos',
                         is_media_resource=False,
-                        name=f'Videos',  # TODO Localization
+                        name='Videos',  # TODO Localization
                         image=None  # TODO Image
                     ),
                 ]

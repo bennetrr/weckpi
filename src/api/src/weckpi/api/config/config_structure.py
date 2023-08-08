@@ -35,7 +35,7 @@ class WeckPiConfig:
         }
 
         with config_file.open('w') as config_stream:
-            json.dump(config_json, config_stream)
+            json.dump(config_json, config_stream, indent=4)
 
 
 @dataclass

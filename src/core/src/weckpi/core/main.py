@@ -1,3 +1,4 @@
+"""The main script of the WeckPi project."""
 from __future__ import annotations
 
 import importlib
@@ -5,10 +6,10 @@ import logging
 import pkgutil
 from dataclasses import asdict
 from pathlib import Path
+import sys
 from typing import Any
 
 import socketio
-import sys
 from flask import Flask
 
 import weckpi.plugin
@@ -33,6 +34,7 @@ sio_logger = logging.getLogger('weckpi.core.main.socket')
 # TODO Implement settings and music selector
 
 def main():
+    """The main method of the main script of the WeckPi project."""
     sio = socketio.Server(
         async_mode='threading',
         logger=sio_logger,
@@ -142,12 +144,12 @@ def main():
     player.on_queue_position_change = lambda value: sio.emit(
         'propertyChange',
         {'prop': 'music.queuePosition', 'value': value}
-        )
+    )
 
     player.on_position_change = lambda value: sio.emit(
         'propertyChange',
         {'prop': 'music.position', 'value': value}
-        )
+    )
 
     app.run()
 

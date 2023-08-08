@@ -58,8 +58,6 @@ class Mpv(MediaPlayer):
         # Event handlers
         def on_idle_status_change(_, idle: bool):
             """Event handler for the core_idle property."""
-            logger.debug(f'{idle=}{" (blocked)" if self._block_idle_status_event or not idle else ""}')
-
             if not idle:
                 if self._on_queue_position_change is None:
                     return
@@ -99,7 +97,6 @@ class Mpv(MediaPlayer):
     def _play_current_item(self):
         """Get the media resource information for the MRID and play the item."""
         mrid = self._queue[self._current_queue_index]
-        provider_id, provider_instance_id, _ = mrid.split(':', 2)
 
         try:
             self._current_item = self._get_plugin_instance(mrid).resolve_mrid(mrid)
@@ -169,7 +166,7 @@ class Mpv(MediaPlayer):
 
     def add_items(self, mrids: Sequence[str]):
         """Add multiple items at the end of the queue."""
-        for i, mrid in enumerate(mrids):
+        for mrid in mrids:
             self.add_item(mrid)
 
     def remove_item(self, index: int):

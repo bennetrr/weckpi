@@ -35,7 +35,7 @@ class LocalFS(MediaProvider):
 
     search = None
 
-    def explore(self, path: str = "/"):
+    def explore(self, mrid: str = "/"):
         """List all media files and directories containing media files in the given path."""
         # TODO Implement
         raise NotImplementedError
