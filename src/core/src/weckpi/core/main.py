@@ -15,6 +15,7 @@ from flask import Flask
 import weckpi.plugin
 from weckpi.api.music import MediaPlayer, MediaProvider
 from weckpi.api.plugin_manager import plugin_manager
+from weckpi.api.config import config
 
 root_logger = logging.getLogger('weckpi')
 root_logger.setLevel(logging.DEBUG)
@@ -99,7 +100,8 @@ def main():
                 'repeat': player.repeat,
                 'volume': player.volume,
                 'position': player.position
-            }
+            },
+            'config': config().to_json()
         }
 
         logger.debug(data)

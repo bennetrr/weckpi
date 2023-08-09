@@ -3,7 +3,8 @@ from datetime import datetime
 from pathlib import Path
 
 from weckpi.api.authentication import OAuthSession
-from weckpi.api.config.config_structure import MediaProviderInstanceConfig, MusicConfig, WeckPiConfig, config
+from weckpi.api.config.root_config import WeckPiConfig, config
+from weckpi.api.config.music_config import MediaProviderInstanceConfig, MusicConfig
 
 
 def test_config_parser():

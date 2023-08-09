@@ -1,41 +1,10 @@
-"""The data structure for the configuration."""
+"""All music related configuration models."""
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
 
 from weckpi.api.authentication import OAuthSession
-
-
-@dataclass
-class WeckPiConfig:
-    """
-    The root config model.
-
-    :var music: Config for the music system.
-    """
-    music: MusicConfig
-
-    @classmethod
-    def from_json(cls, config_file: Path) -> WeckPiConfig:
-        """Create a WeckPiConfig object from a json file."""
-        with config_file.open('r', encoding='utf-8') as config_stream:
-            config_json: dict = json.load(config_stream)
-
-        return cls(
-            MusicConfig.from_json(config_json['music'])
-        )
-
-    def to_json(self, config_file: Path) -> None:
-        """Save this WeckPiConfig object to a json file."""
-        config_json = {
-            'music': self.music.to_json()
-        }
-
-        with config_file.open('w', encoding='utf-8') as config_stream:
-            json.dump(config_json, config_stream, indent=4)
 
 
 @dataclass
@@ -114,14 +83,3 @@ class MediaProviderInstanceConfig:
                 'expireTime': self.auth_session.expire_time.isoformat()
             }
         }
-
-
-_config_instance: WeckPiConfig | None = None
-
-
-def config(config_file: Path = None) -> WeckPiConfig:
-    """Get the configuration object."""
-    global _config_instance
-    if _config_instance is None:
-        _config_instance = WeckPiConfig.from_json(config_file)
-    return _config_instance
