@@ -2486,6 +2486,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mobx-state-tree@npm:^5.1.8":
+  version: 5.1.8
+  resolution: "mobx-state-tree@npm:5.1.8"
+  peerDependencies:
+    mobx: ^6.3.0
+  checksum: 251e69a17dd025dd080a38cf446ae59febcf1a95f88abfc9e7eff04db139783b5da5e8f997b365da2da13259140695c3f0cd46b5be63cb25658219e86321defb
+  languageName: node
+  linkType: hard
+
+"mobx@npm:^6.10.0":
+  version: 6.10.0
+  resolution: "mobx@npm:6.10.0"
+  checksum: 8279d5a978d845664fb1830ce1e7f3fcebd5809bd9be6f2cac9b190e07cf6f16b09581107cc2d1ff7097e979da758fefd9ac68db76c814b8e783e59d0b8e418c
+  languageName: node
+  linkType: hard
+
 "mri@npm:^1.1.0":
   version: 1.2.0
   resolution: "mri@npm:1.2.0"
@@ -3784,6 +3800,8 @@ __metadata:
     eslint: ^8.28.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-svelte: ^2.26.0
+    mobx: ^6.10.0
+    mobx-state-tree: ^5.1.8
     postcss: ^8.4.23
     postcss-load-config: ^4.0.1
     prettier: ^2.8.0

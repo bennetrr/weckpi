@@ -6,16 +6,15 @@ import logging
 import pkgutil
 from dataclasses import asdict
 from pathlib import Path
-import sys
 from typing import Any
 
 import socketio
+import sys
 from flask import Flask
 
 import weckpi.plugin
 from weckpi.api.music import MediaPlayer, MediaProvider
 from weckpi.api.plugin_manager import plugin_manager
-from weckpi.api.config import config
 
 root_logger = logging.getLogger('weckpi')
 root_logger.setLevel(logging.DEBUG)
@@ -65,15 +64,15 @@ def main():
 
     player: MediaPlayer = plugin_manager().get_media_player('mpv').cls()
     local_fs: MediaProvider = (plugin_manager().get_media_provider('localFs')
-                               .cls(album_cover_dir=Path('./tmp-static/local-fs')))
+                               .cls(album_cover_dir=Path('/tmp/weckpi/localFs')))
     plugin_manager().get_media_provider('localFs').register_instance('localFs', local_fs)
 
     playlist = [
-        'local-fs:local-fs:/Users/wemogymac/Music/VNV Nation/Transnational/04 Retaliate.wma',
-        'local-fs:local-fs:/Users/wemogymac/Music/VNV Nation/Transnational/05 Lost Horizon.wma',
-        'local-fs:local-fs:/Users/wemogymac/Music/VNV Nation/Transnational/07 If I Was.wma',
-        'local-fs:local-fs:/Users/wemogymac/Music/VNV Nation/Transnational/08 Aeroscope.wma',
-        'local-fs:local-fs:/Users/wemogymac/Music/VNV Nation/Transnational/09 Off Screen.wma'
+        'localFs:localFs:/Users/wemogymac/Music/VNV Nation/Transnational/04 Retaliate.wma',
+        'localFs:localFs:/Users/wemogymac/Music/VNV Nation/Transnational/05 Lost Horizon.wma',
+        'localFs:localFs:/Users/wemogymac/Music/VNV Nation/Transnational/07 If I Was.wma',
+        'localFs:localFs:/Users/wemogymac/Music/VNV Nation/Transnational/08 Aeroscope.wma',
+        'localFs:localFs:/Users/wemogymac/Music/VNV Nation/Transnational/09 Off Screen.wma'
     ]
     player.add_items(playlist)
 
@@ -85,23 +84,23 @@ def main():
     def on_disconnect(sid):
         logger.info('Client %s disconnected', sid)
 
-    @sio.on('initialDataRequest')
+    @sio.on('initialAppState')
     def on_initial_data_request(sid):
         logger.info('Client %s requested initial data', sid)
-        player.play()
         player.volume = 60
 
         data = {
             'music': {
                 'queue': [asdict(x) for x in player.queue],
                 'queuePosition': player.queue_position,
-                'isPlaying': True,
+                'isPlaying': False,
                 'shuffle': player.shuffle,
                 'repeat': player.repeat,
                 'volume': player.volume,
                 'position': player.position
             },
-            'config': config().to_json()
+            'initialized': True
+            # 'config': config().to_json()
         }
 
         logger.debug(data)
@@ -114,20 +113,20 @@ def main():
         logger.info('Client %s changed property %s to %s', sid, prop, value)
 
         match prop:
-            case 'music.queuePosition':
+            case '/music/queuePosition':
                 player.queue_position = value
-            case 'music.position':
+            case '/music/position':
                 player.position = value
-            case 'music.isPlaying':
+            case '/music/isPlaying':
                 if value:
                     player.play()
                 else:
                     player.pause()
-            case 'music.shuffle':
+            case '/music/shuffle':
                 player.shuffle = value
-            case 'music.repeat':
+            case '/music/repeat':
                 player.repeat = value
-            case 'music.volume':
+            case '/music/volume':
                 player.volume = value
 
     @sio.on('action')
@@ -144,13 +143,13 @@ def main():
                 player.stop()
 
     player.on_queue_position_change = lambda value: sio.emit(
-        'propertyChange',
-        {'prop': 'music.queuePosition', 'value': value}
+        'appStatePatch',
+        {'prop': '/music/queuePosition', 'value': value}
     )
 
     player.on_position_change = lambda value: sio.emit(
-        'propertyChange',
-        {'prop': 'music.position', 'value': value}
+        'appStatePatch',
+        {'prop': '/music/position', 'value': value}
     )
 
     app.run()

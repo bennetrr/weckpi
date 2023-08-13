@@ -4,9 +4,18 @@
     import "../app.postcss";
 
     import {arrow, autoUpdate, computePosition, flip, offset, shift} from "@floating-ui/dom";
-    import {storePopup} from "@skeletonlabs/skeleton";
+    import {ProgressRadial, storePopup} from "@skeletonlabs/skeleton";
+    import appState from "$lib/app-state/app-state";
 
     storePopup.set({computePosition, autoUpdate, offset, shift, flip, arrow});
 </script>
 
-<slot/>
+{#if $appState.initialized}
+    <slot/>
+{:else}
+    <main class="flex place-items-center place-content-center h-full bg-surface-50-900-token">
+        <ProgressRadial/>
+    </main>
+{/if}
+
+
