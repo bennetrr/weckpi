@@ -9,7 +9,7 @@
 <div class="bg-surface-100-800-token p-4 h-full w-[450px]">
     {#each $appState.music.queue as queueElement, i}
         <button class="w-full flex flex-row gap-4 overflow-hidden whitespace-nowrap my-3 p-3 bg-surface-200-700-token rounded-lg hover:brightness-[115%] cursor-pointer border-primary-50-900-token"
-                class:border-2={i===$appState.music.queuePosition} on:click={() => $appState.music.queuePosition = i}>
+                class:border-2={i===$appState.music.queuePosition} on:click={() => appState.music.setQueuePosition(i)}>
             {#if i === $appState.music.queuePosition}
                 <Fa class="my-auto" icon={faPlay}/>
             {:else}
