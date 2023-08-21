@@ -20,6 +20,7 @@
         "@tailwindcss/forms": "^0.5.3",
         "@types/cookie": "^0.5.1",
         "@types/debug": "^4.1.8",
+        "@types/luxon": "^3.3.1",
         "@typescript-eslint/eslint-plugin": "^5.45.0",
         "@typescript-eslint/parser": "^5.45.0",
         "autoprefixer": "^10.4.14",
@@ -44,6 +45,7 @@
         "@fortawesome/free-brands-svg-icons": "^6.4.0",
         "@fortawesome/free-solid-svg-icons": "^6.4.0",
         "debug": "^4.3.4",
+        "luxon": "^3.4.0",
         "mobx": "^6.10.0",
         "mobx-state-tree": "^5.1.8",
         "socket.io-client": "^4.7.1"

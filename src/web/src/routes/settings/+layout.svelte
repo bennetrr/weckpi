@@ -1,7 +1,13 @@
-<script>
+<script lang="ts">
+    import {debug} from "debug";
+
     import {AppBar, AppShell} from "@skeletonlabs/skeleton";
     import Fa from "svelte-fa/src/fa.svelte";
-    import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+    import {faArrowLeft, faBell, faMusic} from "@fortawesome/free-solid-svg-icons";
+
+    import SidenavItem from "$lib/components/SidenavItem.svelte";
+
+    const log = debug("weckPiWeb:layout:/settings/");
 </script>
 
 <AppShell>
@@ -17,10 +23,14 @@
         </AppBar>
     </svelte:fragment>
 
-    <slot/>
-
     <svelte:fragment slot="sidebarLeft">
-        Settings Navigation
+        <div class="flex flex-col w-[250px] h-full bg-surface-200-700-token">
+            <SidenavItem icon={faBell} name="Wecker" path="/settings/alarm/"/>
+            <SidenavItem icon={faMusic} name="Musik" path="/settings/music/"/>
+        </div>
     </svelte:fragment>
-</AppShell>
 
+    <div class="p-4">
+        <slot/>
+    </div>
+</AppShell>

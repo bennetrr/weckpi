@@ -1,15 +1,15 @@
-/**
- * Convert the given amount of minutes into a human-readable time format ([HH:][M]M:SS)
- */
-export function minutesToTime(minutes: number, showZeroHours = false): string {
-    const hours = Math.floor(minutes / 60);
-    const minutesLeft = Math.floor(minutes % 60);
-    const seconds = Math.floor((minutes - Math.floor(minutes)) * 60);
+import {debug} from "debug";
+import {Duration} from "luxon";
 
-    let time = `${minutesLeft}:${seconds.toString().padStart(2, "0")}`;
-    if (hours > 0 || showZeroHours) {
-        time = `${hours}:${time}`;
+const log = debug("weckPiWeb:utils:dateTime");
+
+/** Convert the given amount of minutes into a human-readable time format ([HH:][M]M:SS) */
+export function minutesToTime(minutes: number, showZeroHours = false): string {
+    const duration = Duration.fromObject({minute: minutes});
+
+    if (showZeroHours || duration.hours > 0) {
+        return duration.toFormat("H:mm:ss");
     }
 
-    return time;
+    return duration.toFormat("m:ss");
 }

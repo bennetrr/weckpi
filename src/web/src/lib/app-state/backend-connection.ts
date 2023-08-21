@@ -1,43 +1,40 @@
-import {io, type Socket} from "socket.io-client";
 import {debug} from "debug";
-//@ts-ignore
+import {io, type Socket} from "socket.io-client";
+import {applyPatch, applySnapshot, type IJsonPatch, onPatch} from "mobx-state-tree";
+
 import {PUBLIC_WECKPI_CORE_URL} from "$env/static/public";
-
 import appState from "$lib/app-state/app-state";
-import {applyPatch, applySnapshot, onPatch} from "mobx-state-tree";
 
-const log = debug("weckpiWeb:weckpiCoreConnection");
+const log = debug("weckPiWeb:backend");
 
-export class WeckPiCoreConnection {
+export class BackendConnection {
     public sio: Socket;
     private disabled: boolean;
 
     public constructor() {
-        log("Initializing connection to weckpi core on %s", PUBLIC_WECKPI_CORE_URL);
+        log("Initializing connection to the WeckPi backend on %s", PUBLIC_WECKPI_CORE_URL);
         this.sio = io(PUBLIC_WECKPI_CORE_URL);
         this.disabled = true;
 
         // Set the handler for incoming patches
-        this.sio.on("appStatePatch", ({prop, value}) => {
-            this.disable();
-            log("Received app state patch of %s to %O", prop, value);
-            applyPatch(appState, {path: prop, value: value, op: "replace"});
+        this.sio.on("appStatePatch", ({prop: path, value}) => {
+            this.disable();  // TODO Better blocking system than disabling and enabling
+            log("Incoming patch: %s to %o", path, value);
+            applyPatch(appState, {path, value, op: "replace"});  // TODO Use JSONPatch in the backend
             this.enable();
         });
 
         // Set the handler for outgoing patches
-        onPatch(appState, patch => {
-            this.propertyChange(patch.path, patch.value);
-        });
+        onPatch(appState, patch => this.sendAppStatePatch(patch));
 
         // Request the initial app state
         this.sio.emit("initialAppState", (snapshot: any) => {
-            log("Received initial dataset: %O", snapshot);
+            log("Received initial app state: %O", snapshot);
             applySnapshot(appState, snapshot);
             this.enable();
         });
 
-        this.sio.prependAny((name, data) => log("Received event %s with data %O", name, data));
+        this.sio.prependAny((name, data) => log("Received event %s with data %o", name, data));
     }
 
     public enable() {
@@ -50,27 +47,27 @@ export class WeckPiCoreConnection {
         this.disabled = true;
     }
 
-    public propertyChange<T>(prop: string, value: T) {
+    public sendAppStatePatch({path, value}: IJsonPatch) {
+        log("%O", this)
         if (this.disabled) {
-            log("Change of property %s suppressed, because disabled=%s", prop, this.disabled);
+            log("Outgoing patch suppressed (disabled=%s): %s to %o", this.disabled, path, value);
             return;
         }
 
-        log("Sent change of property %s to value %O", prop, value);
-        this.sio.emit("propertyChange", {prop, value});
+        log("Outgoing patch: %s to %o", path, value);
+        this.sio.emit("appStatePatch", {path, value});  // TODO Use JSONPatch in the backend
     }
 
-    public action(name: string) {
+    public sendAction(name: string) {
         if (this.disabled) {
-            log("Action %s suppressed, because disabled=%s", name, this.disabled);
+            log("Outgoing action suppressed (disabled=%s): %s", this.disabled, name);
             return;
         }
 
-        log("Sent action %s", name);
+        log("Outgoing action: %s", name);
         this.sio.emit("action", {name});
     }
 }
 
-
-const weckpiCore: WeckPiCoreConnection = new WeckPiCoreConnection();
-export default weckpiCore;
+const backend: BackendConnection = new BackendConnection();
+export default backend;

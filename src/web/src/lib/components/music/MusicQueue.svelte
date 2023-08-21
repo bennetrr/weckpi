@@ -1,9 +1,13 @@
 <script lang="ts">
+    import {debug} from "debug";
+
     import Fa from "svelte-fa/src/fa.svelte";
     import {faPlay} from "@fortawesome/free-solid-svg-icons";
 
     import appState from "$lib/app-state/app-state";
     import {minutesToTime} from "$lib/utilities/DateTime";
+
+    const log = debug("weckPiWeb:ui:musicQueue");
 </script>
 
 <div class="bg-surface-100-800-token p-4 h-full w-[450px]">

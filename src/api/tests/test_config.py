@@ -10,6 +10,8 @@ from weckpi.api.config.music_config import MediaProviderInstanceConfig, MusicCon
 def test_config_parser():
     """Test if the config is correctly parsed."""
     # Arrange
+    config_file = Path('../../core/resources/config.json')
+
     manual_config = WeckPiConfig(
         music=MusicConfig(
             active_media_player='mpv',
@@ -34,8 +36,6 @@ def test_config_parser():
             }
         )
     )
-
-    config_file = Path('sampleConfig.json')
 
     # Act
     parsed_config = config(config_file)

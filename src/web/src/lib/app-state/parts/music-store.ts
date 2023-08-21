@@ -1,4 +1,7 @@
+import {debug} from "debug";
 import {types} from "mobx-state-tree";
+
+const log = debug("weckPiWeb:appState:music");
 
 const Queue = types.model({
     title: types.string,

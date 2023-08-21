@@ -6,6 +6,7 @@
     import {arrow, autoUpdate, computePosition, flip, offset, shift} from "@floating-ui/dom";
     import {ProgressRadial, storePopup} from "@skeletonlabs/skeleton";
     import appState from "$lib/app-state/app-state";
+    import backend from "$lib/app-state/backend-connection";  // Don't delete, this is needed to initialize the connection
 
     storePopup.set({computePosition, autoUpdate, offset, shift, flip, arrow});
 </script>
@@ -17,5 +18,3 @@
         <ProgressRadial/>
     </main>
 {/if}
-
-

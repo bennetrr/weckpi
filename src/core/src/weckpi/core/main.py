@@ -7,12 +7,14 @@ import pkgutil
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
+from datetime import time
 
 import socketio
 import sys
 from flask import Flask
 
 import weckpi.plugin
+from weckpi.api.config import config
 from weckpi.api.music import MediaPlayer, MediaProvider
 from weckpi.api.plugin_manager import plugin_manager
 
@@ -35,6 +37,8 @@ sio_logger = logging.getLogger('weckpi.core.main.socket')
 
 def main():
     """The main method of the main script of the WeckPi project."""
+    config(Path('../../../test-config.json'))
+
     sio = socketio.Server(
         async_mode='threading',
         logger=sio_logger,
@@ -85,8 +89,8 @@ def main():
         logger.info('Client %s disconnected', sid)
 
     @sio.on('initialAppState')
-    def on_initial_data_request(sid):
-        logger.info('Client %s requested initial data', sid)
+    def on_initial_app_state_request(sid):
+        logger.info('Client %s requested initial app state', sid)
         player.volume = 60
 
         data = {
@@ -99,20 +103,41 @@ def main():
                 'volume': player.volume,
                 'position': player.position
             },
-            'initialized': True
-            # 'config': config().to_json()
+            'initialized': True,
+            'config': {
+                'alarm': config().alarm.to_json()
+            }
         }
 
         logger.debug(data)
-
         return data
 
-    @sio.on('propertyChange')
-    def on_property_change(sid, data: dict):
-        prop, value = data.get('prop'), data.get('value')
-        logger.info('Client %s changed property %s to %s', sid, prop, value)
+    @sio.on('appStatePatch')
+    def on_app_state_patch(sid, data: dict):
+        path: str = data.get('path')
+        value: Any = data.get('value')
+        logger.info('Client %s changed property %s to %s', sid, path, value)
 
-        match prop:
+        if path.startswith('/config/alarm/'):
+            _, _, _, weekday, prop = path.split('/')
+
+            alarm_config = config().alarm.get_alarm_config(
+                {'monday': 1, 'tuesday': 2, 'wednesday': 3, 'thursday': 4, 'friday': 5, 'saturday': 6, 'sunday': 7}
+                [weekday]
+            )
+
+            match prop:
+                case 'active':
+                    alarm_config.active = value
+                case 'time':
+                    alarm_config.time = time.fromisoformat(value)
+                case 'overrideActive':
+                    alarm_config.override_active = value
+                case 'overrideTime':
+                    alarm_config.override_time = time.fromisoformat(value)
+            config().flush()
+
+        match path:
             case '/music/queuePosition':
                 player.queue_position = value
             case '/music/position':

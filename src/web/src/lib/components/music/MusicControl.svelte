@@ -1,11 +1,15 @@
 <script lang="ts">
+    import {debug} from "debug";
+
     import {popup, type PopupSettings, ProgressBar, ProgressRadial} from "@skeletonlabs/skeleton";
     import Fa from "svelte-fa/src/fa.svelte";
     import {faBackwardStep, faForwardStep, faPause, faPlay, faRepeat, faShuffle, faStop, faVolumeHigh, faVolumeLow, faVolumeMute} from "@fortawesome/free-solid-svg-icons";
 
     import appState from "$lib/app-state/app-state";
+    import backend from "$lib/app-state/backend-connection";
     import {minutesToTime} from "$lib/utilities/DateTime";
-    import weckpiCore from "$lib/app-state/backend-connection";
+
+    const log = debug("weckPiWeb:ui:musicControl");
 
     //region Volume Slider
     function volumeIcon(volume: number) {
@@ -64,7 +68,7 @@
                 <Fa icon={faShuffle}/>
             </button>
 
-            <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.previousSong")}>
+            <button class="btn-icon variant-ghost" on:click={() => backend.sendAction("music.previousSong")}>
                 <Fa icon={faBackwardStep}/>
             </button>
 
@@ -72,7 +76,7 @@
                 <Fa icon={$appState.music.isPlaying ? faPause : faPlay}/>
             </button>
 
-            <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.nextSong")}>
+            <button class="btn-icon variant-ghost" on:click={() => backend.sendAction("music.nextSong")}>
                 <Fa icon={faForwardStep}/>
             </button>
 
@@ -91,7 +95,7 @@
     </div>
 
     <div class="flex place-items-center place-content-end gap-4 mr-10">
-        <button class="btn-icon variant-ghost" on:click={() => weckpiCore.action("music.stop")}>
+        <button class="btn-icon variant-ghost" on:click={() => backend.sendAction("music.stop")}>
             <Fa icon={faStop}/>
         </button>
 

@@ -53,3 +53,4 @@ Temporary Items
 .apdisk
 
 *.secret.json
+src/core/test-config.json

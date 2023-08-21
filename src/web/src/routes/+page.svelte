@@ -1,11 +1,10 @@
 <script lang="ts">
+    import {AppBar, AppShell} from "@skeletonlabs/skeleton";
     import Fa from "svelte-fa/src/fa.svelte";
     import {faCog} from "@fortawesome/free-solid-svg-icons";
 
-    import {AppBar, AppShell} from "@skeletonlabs/skeleton";
-
-    import MusicControl from "$lib/components/music/MusicControl.svelte";
     import Clock from "$lib/components/Clock.svelte";
+    import MusicControl from "$lib/components/music/MusicControl.svelte";
     import MusicQueue from "$lib/components/music/MusicQueue.svelte";
 </script>
 
@@ -19,7 +18,7 @@
             <span>WeckPi</span>
 
             <svelte:fragment slot="trail">
-                <a href="/settings" title="Open Settings">
+                <a href="/settings/" title="Einstellungen öffnen">
                     <Fa icon={faCog}/>
                 </a>
             </svelte:fragment>
@@ -30,7 +29,7 @@
         <MusicQueue/>
     </svelte:fragment>
 
-    <main class="flex place-items-center place-content-center h-full h1">
+    <main class="flex place-items-center place-content-center h-full">
         <Clock/>
     </main>
 

@@ -81,5 +81,5 @@ class MediaProviderInstanceConfig:
                 'accessToken': self.auth_session.access_token,
                 'refreshToken': self.auth_session.refresh_token,
                 'expireTime': self.auth_session.expire_time.isoformat()
-            }
+            } if self.auth_session else None
         }
