@@ -37,7 +37,7 @@ sio_logger = logging.getLogger('weckpi.core.main.socket')
 
 def main():
     """The main method of the main script of the WeckPi project."""
-    config(Path('../../../test-config.json'))
+    config(Path('../../../resources/test-config.secret.json'))
 
     sio = socketio.Server(
         async_mode='threading',
