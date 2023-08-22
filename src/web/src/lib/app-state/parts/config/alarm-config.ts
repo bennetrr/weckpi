@@ -14,7 +14,7 @@ const Time = types.custom<string, DateTime>({
         return DateTime.fromISO(snapshot);
     },
     toSnapshot(value: DateTime): string {
-        return value.toISOTime()!;
+        return value.toISOTime({includeOffset: false})!;
     },
     isTargetType(value: DateTime | string): boolean {
         return value instanceof DateTime;
@@ -65,17 +65,17 @@ export const AlarmConfig = types.model({
     /** Get the alarm that would go off next. */
     getNextAlarm() {
         // Get a list of all weekdays beginning with the current weekday
-        const weekdays = ([1, 2, 3, 4, 5, 6, 7]
-            .slice(DateTime.local().weekday - 1)
-            .concat([1, 2, 3, 4, 5, 6, 7]
-                .slice(0, DateTime.local().weekday - 1)) as IsoWeekday[]);
-
         const currentTime = DateTime.local().set({
             day: self.getAlarmConfig(1).time.day,
             year: self.getAlarmConfig(1).time.year,
             month: self.getAlarmConfig(1).time.month
         });
         const currentWeekday = (DateTime.local().weekday as IsoWeekday);
+
+        const weekdays = ([1, 2, 3, 4, 5, 6, 7]
+            .slice(currentWeekday - 1)
+            .concat([1, 2, 3, 4, 5, 6, 7]
+                .slice(0, currentWeekday - 1)) as IsoWeekday[]);
 
         log("currentTime=%s, currentWeekday=%s, weekdays=%o", currentTime, currentWeekday, weekdays);
 

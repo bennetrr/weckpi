@@ -7,7 +7,9 @@ import pkgutil
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
-from datetime import time
+from datetime import datetime, time
+from threading import Thread
+from time import sleep
 
 import socketio
 import sys
@@ -177,6 +179,53 @@ def main():
         {'prop': '/music/position', 'value': value}
     )
 
+    def get_next_alarm() -> dict[str, time] | None:
+        current_weekday = datetime.now().isoweekday()
+        current_time = datetime.now().time().replace(second=0, microsecond=0)
+
+        weekdays = list(range(current_weekday, 8)) + list(range(1, current_weekday))
+
+        logger.debug('currentTime=%s, currentWeekday=%s, weekdays=%s', current_time, current_weekday, weekdays)
+
+        for weekday in weekdays:
+            alarm_config = config().alarm.get_alarm_config(weekday)
+            logger.debug("weekday=%s, alarmConfig=%s", weekday, alarm_config)
+
+            if alarm_config.override_active and (
+                    weekday != current_weekday or alarm_config.override_time >= current_time):
+                return {"time": alarm_config.override_time, "weekday": weekday}
+
+            if alarm_config.active and (weekday != current_weekday or alarm_config.time >= current_time):
+                return {"time": alarm_config.time, "weekday": weekday}
+
+        return None
+
+    def t_alarm():
+        alarm_active = False
+
+        while True:
+            sleep(10)
+            # Get the next alarm
+            next_alarm = get_next_alarm()
+            logger.debug('Next alarm: %s, %s', next_alarm['weekday'], next_alarm['time'].isoformat())
+
+            if next_alarm is None:
+                continue
+
+            if next_alarm['weekday'] == datetime.now().isoweekday() and \
+               next_alarm['time'].hour == datetime.now().hour and \
+               next_alarm['time'].minute == datetime.now().minute and \
+               not alarm_active:
+                alarm_active = True
+                logger.info('Activated alarm!')
+                player.play()
+            if next_alarm['weekday'] == datetime.now().isoweekday() and \
+               next_alarm['time'].hour == datetime.now().hour and \
+               next_alarm['time'].minute + 1 == datetime.now().minute:
+                alarm_active = False
+
+    alarm_thread = Thread(target=t_alarm)
+    alarm_thread.start()
     app.run()
 
 
