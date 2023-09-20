@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "weckpi-core"
+version = "0.0.1-alpha1"
+description = "The core software of the WeckPi project"
+authors = ["Bennet Ranft <bennet@bennetr.me>"]
+license = "MIT"
+
+readme = "../../README.md"
+homepage = "https://github.com/bennetrr/weckpi"
+repository = "https://github.com/bennetrr/weckpi"
+documentation = "https://github.com/bennetrr/weckpi"
+
+[[tool.poetry.packages]]
+include = "weckpi"
+from = "src"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+weckpi-api = {path = "../api", develop = true}
+python-socketio = "^5.8.0"
+weckpi-coreplugin = {path = "../coreplugin", develop = true}
+flask = "^2.3.2"
+simple-websocket = "^0.10.1"
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.17.4"
+
+[tool.poetry-monorepo-dependency-plugin]
+enable = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

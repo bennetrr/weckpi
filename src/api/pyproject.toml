@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "weckpi-api"
+version = "0.0.1-alpha1"
+description = "The API for developing plugins for the WeckPi project"
+authors = ["Bennet Ranft <bennet@bennetr.me>"]
+license = "MIT"
+
+readme = "../../README.md"
+homepage = "https://github.com/bennetrr/weckpi"
+repository = "https://github.com/bennetrr/weckpi"
+documentation = "https://github.com/bennetrr/weckpi"
+
+[[tool.poetry.packages]]
+include = "weckpi"
+from = "src"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.17.4"
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

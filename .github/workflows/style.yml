@@ -1,4 +1,4 @@
-name: Code Style Checking
+name: Code Style Check
 
 on:
   pull_request:
@@ -6,58 +6,65 @@ on:
       - main
   workflow_dispatch:
 
+
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
-  pylint:
+  pylint-api:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
+    - uses: actions/setup-python@v3
       with:
-        python-version: "3.10"
+        python-version: "3.11"
+        
+    - uses: Gr1N/setup-poetry@v8
+    - run: poetry -C src/api install --with dev
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r weckpi-core/requirements.txt
-        pip install -r weckpi-core/requirements.dev.txt
+    - uses: pr-annotators/pylint-pr-annotator@main
+    - run: poetry -C src/api run pylint src/api/**/*.py --rcfile pylintrc
 
-    - name: Set up pylint annotator
-      uses: pr-annotators/pylint-pr-annotator@main
-
-    - name: Analyse the code with pylint
-      run: |
-        pylint "weckpi-core/*.py"
-
-  eslint:
+  pylint-coreplugin:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-#      - name: Install dependencies
-#        working-directory: weckpi-web/src
-#        run: |
-#          yarn install --dev
-#          yarn add @microsoft/eslint-formatter-sarif@2.1.7
-#
-#      - name: Analyse the code with ESLint
-#        working-directory: weckpi-web/src
-#        run: yarn eslint
-#          --config .eslintrc.json
-#          --ext .js,.jsx,.ts,.tsx
-#          --format @microsoft/eslint-formatter-sarif
-#          --output-file eslint-results.sarif
-#        continue-on-error: true
-#
-#      - name: Upload analysis results to GitHub
-#        uses: github/codeql-action/upload-sarif@v2
-#        with:
-#          sarif_file: weckpi-web/src/eslint-results.sarif
-#          wait-for-processing: true
+    - uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
+        
+    - uses: Gr1N/setup-poetry@v8
+    - run: poetry -C src/coreplugin install --with dev
+
+    - uses: pr-annotators/pylint-pr-annotator@main
+    - run: poetry -C src/coreplugin run pylint src/coreplugin/**/*.py --rcfile pylintrc
+      
+  pylint-core:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
+
+    - uses: Gr1N/setup-poetry@v8
+    - run: poetry -C src/core install --with dev
+
+    - uses: pr-annotators/pylint-pr-annotator@main
+    - run: poetry -C src/core run pylint src/core/**/*.py --rcfile pylintrc
+
+  eslint-web:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: yarn --cwd src/web install
+        
+      - run: yarn --cwd src/web run lint

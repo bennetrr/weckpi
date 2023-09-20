@@ -1,0 +1,50 @@
+{
+    "music": {
+        "activeMediaPlayer": "mpv",
+        "mediaProviderInstances": {}
+    },
+    "alarm": {
+        "monday": {
+            "active": true,
+            "time": "08:00:00",
+            "overrideActive": false,
+            "overrideTime": "09:00:00"
+        },
+        "tuesday": {
+            "active": true,
+            "time": "08:00:00",
+            "overrideActive": false,
+            "overrideTime": "09:00:00"
+        },
+        "wednesday": {
+            "active": true,
+            "time": "08:00:00",
+            "overrideActive": false,
+            "overrideTime": "09:00:00"
+        },
+        "thursday": {
+            "active": true,
+            "time": "08:00:00",
+            "overrideActive": false,
+            "overrideTime": "09:00:00"
+        },
+        "friday": {
+            "active": true,
+            "time": "08:00:00",
+            "overrideActive": false,
+            "overrideTime": "09:00:00"
+        },
+        "saturday": {
+            "active": true,
+            "time": "08:00:00",
+            "overrideActive": false,
+            "overrideTime": "09:00:00"
+        },
+        "sunday": {
+            "active": true,
+            "time": "08:00:00",
+            "overrideActive": false,
+            "overrideTime": "09:00:00"
+        }
+    }
+}
